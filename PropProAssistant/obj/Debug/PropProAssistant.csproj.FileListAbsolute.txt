@@ -8,3 +8,4 @@ C:\Users\dell\Documents\Projetos\PropProAssistant\PropProAssistant\obj\Debug\Pro
 C:\Users\dell\Documents\Projetos\PropProAssistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.CoreCompileInputs.cache
 C:\Users\dell\Documents\Projetos\PropProAssistant\PropProAssistant\obj\Debug\PropProAssistant.exe
 C:\Users\dell\Documents\Projetos\PropProAssistant\PropProAssistant\obj\Debug\PropProAssistant.pdb
+C:\Users\dell\Documents\Projetos\PropProAssistant\PropProAssistant\obj\Debug\PropProAssistant.Frm_CadastroProposta.resources

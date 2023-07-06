@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace PropProAssistant
 {
-    public partial class Form1 : Form
+    public partial class Frm_CadastroProposta : Form
     {
-        public Form1()
+        public Frm_CadastroProposta()
         {
             InitializeComponent();
         }
