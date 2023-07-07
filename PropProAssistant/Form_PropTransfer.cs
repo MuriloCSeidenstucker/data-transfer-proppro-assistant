@@ -36,12 +36,19 @@ namespace PropProAssistant
                     oXL.Visible = false;
 
                     oWB = oXL.Workbooks.Open(filePath);
-                    oSheet = oWB.Worksheets["Principal"];
+                    oSheet = oWB.ActiveSheet;
 
-                    oRng = oSheet.get_Range("A1", "E1");
-                    var values = oRng.Value2;
+                    var startCell = "A1";
+                    var endRow = oSheet.Rows.End[Excel.XlDirection.xlDown].Address.Split('$');
+                    var rowCount = int.Parse(endRow[2]);
+                    var endColumn = oSheet.Columns.End[Excel.XlDirection.xlToRight].Address.Split('$');
+                    var columnCount = endColumn[1];
+                    var endCell = $"{columnCount}{rowCount}";
+                    var header = oSheet.get_Range(startCell, $"{columnCount}1");
 
-                    foreach (var value in values)
+                    oRng = oSheet.get_Range(startCell, endCell);
+
+                    foreach (var value in oSheet.get_Range(startCell, $"A{rowCount}").Value2)
                     {
                         MessageBox.Show(value.ToString());
                     }
