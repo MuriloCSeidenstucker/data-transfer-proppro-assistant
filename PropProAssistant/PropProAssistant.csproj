@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProposalData.cs" />
     <EmbeddedResource Include="Form_PropTransfer.resx">
       <DependentUpon>Form_PropTransfer.cs</DependentUpon>
     </EmbeddedResource>
