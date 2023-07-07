@@ -9,3 +9,15 @@ C:\Users\dell\Documents\Projetos\PropProAssistant\PropProAssistant\obj\Debug\Pro
 C:\Users\dell\Documents\Projetos\PropProAssistant\PropProAssistant\obj\Debug\PropProAssistant.exe
 C:\Users\dell\Documents\Projetos\PropProAssistant\PropProAssistant\obj\Debug\PropProAssistant.pdb
 C:\Users\dell\Documents\Projetos\PropProAssistant\PropProAssistant\obj\Debug\PropProAssistant.Frm_CadastroProposta.resources
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Debug\PropProAssistant.exe.config
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Debug\PropProAssistant.exe
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Debug\PropProAssistant.pdb
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.AssemblyReference.cache
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.SuggestedBindingRedirects.cache
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.ResolveComReference.cache
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.Properties.Resources.resources
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.GenerateResource.cache
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.CoreCompileInputs.cache
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.exe
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.pdb
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.Form_PropTransfer.resources

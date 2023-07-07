@@ -16,7 +16,7 @@ namespace PropProAssistant
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Frm_CadastroProposta());
+            Application.Run(new Form_PropTransfer());
         }
     }
 }
