@@ -1,23 +1,27 @@
-﻿using Microsoft.Office.Interop.Excel;
-using OfficeOpenXml;
+﻿using OfficeOpenXml;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace PropProAssistant
 {
     public partial class Form_PropTransfer : Form
     {
+        private string _pathMainSheet;
+        private string _pathModelSheet;
+
         public Form_PropTransfer()
         {
             InitializeComponent();
 
-            Btn_FileSelector.Text = "Selecionar Planilha Origem";
-            Btn_FileSelector.AutoSize = true;
+            Btn_MainSheetSelector.Text = "Selecionar Planilha Origem";
+            Btn_MainSheetSelector.AutoSize = true;
+
+            Btn_ModelSheetSelector.Text = "Selecionar Planilha Modelo";
+            Btn_ModelSheetSelector.AutoSize = true;
+
+            Btn_DataTransfer.Text = "Transferir Dados";
+            Btn_DataTransfer.AutoSize = true;
         }
 
         private void Btn_FileSelector_Click(object sender, EventArgs e)
@@ -28,23 +32,54 @@ namespace PropProAssistant
 
             if (fileSelector.ShowDialog() == DialogResult.OK)
             {
-                string filePath = fileSelector.FileName;
-                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                _pathMainSheet = fileSelector.FileName;
+            }
+        }
 
-                using (var package = new ExcelPackage(new FileInfo(filePath)))
+        private void Btn_ModelSheetSelector_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fileSelector = new OpenFileDialog();
+            fileSelector.Title = "Selecionar Planilha Modelo";
+            fileSelector.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+
+            if (fileSelector.ShowDialog() == DialogResult.OK)
+            {
+                _pathModelSheet = fileSelector.FileName;
+            }
+        }
+
+        private void Btn_DataTransfer_Click(object sender, EventArgs e)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            using (var mainPackage =  new ExcelPackage(new FileInfo(_pathMainSheet)))
+            using (var modelPackage = new ExcelPackage(new FileInfo(_pathModelSheet)))
+            {
+                var mainSheet = mainPackage.Workbook.Worksheets[0];
+                var modelSheet = modelPackage.Workbook.Worksheets[0];
+
+                int mainRow = 2;
+
+                for (int i = 2; i < modelSheet.Dimension.End.Row; i++)
                 {
-                    var sheet = package.Workbook.Worksheets[0];
+                    if (mainRow > mainSheet.Dimension.End.Row) break;
 
-                    for (int i = 2; i < sheet.Dimension.End.Row; i++)
+                    if (int.Parse(modelSheet.Cells[i, 1].Value.ToString())
+                        == int.Parse(mainSheet.Cells[mainRow, 1].Value.ToString()))
                     {
-                        if (int.Parse(sheet.Cells[i, 1].Value.ToString()) == 34)
-                        {
-                            MessageBox.Show(sheet.Cells[i, 2].Value.ToString());
-                        }
+                        modelSheet.Cells[i, 3].Value = mainSheet.Cells[mainRow, 7].Value;
+                        modelSheet.Cells[i, 4].Value = mainSheet.Cells[mainRow, 5].Value;
+                        modelSheet.Cells[i, 5].Value = mainSheet.Cells[mainRow, 5].Value;
+                        mainRow++;
                     }
-
-                    package.Dispose();
                 }
+
+                modelPackage.Save();
+
+                MessageBox.Show("Transferência de dados concluida!");
+
+                mainPackage.Dispose();
+                modelPackage.Dispose();
             }
         }
     }
