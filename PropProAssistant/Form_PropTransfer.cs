@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.Office.Interop.Excel;
+using OfficeOpenXml;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -12,49 +16,34 @@ namespace PropProAssistant
         {
             InitializeComponent();
 
-            Btn_FileSelector.Text = "Selecionar Planilha";
+            Btn_FileSelector.Text = "Selecionar Planilha Origem";
             Btn_FileSelector.AutoSize = true;
         }
 
         private void Btn_FileSelector_Click(object sender, EventArgs e)
         {
             OpenFileDialog fileSelector = new OpenFileDialog();
-            fileSelector.Title = "Selecionar Planilha";
+            fileSelector.Title = "Selecionar Planilha Origem";
             fileSelector.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
 
             if (fileSelector.ShowDialog() == DialogResult.OK)
             {
                 string filePath = fileSelector.FileName;
-                Excel.Application oXL = null;
-                Excel._Workbook oWB = null;
-                Excel._Worksheet oSheet = null;
-                Excel.Range oRng = null;
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-                try
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
                 {
-                    oXL = new Excel.Application();
-                    oXL.Visible = false;
+                    var sheet = package.Workbook.Worksheets[0];
 
-                    oWB = oXL.Workbooks.Open(filePath);
-                    oSheet = oWB.ActiveSheet;
-
-                    var endRow = oSheet.Rows.End[Excel.XlDirection.xlDown].Row;
-                    var endColumn = oSheet.Columns.End[Excel.XlDirection.xlToRight].Column;
-
-                    foreach (var value in oSheet.get_Range("B1", $"B{endRow}").Value2)
+                    for (int i = 2; i < sheet.Dimension.End.Row; i++)
                     {
-                        MessageBox.Show(value.ToString());
+                        if (int.Parse(sheet.Cells[i, 1].Value.ToString()) == 34)
+                        {
+                            MessageBox.Show(sheet.Cells[i, 2].Value.ToString());
+                        }
                     }
 
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Ocorreu uma exceção: " + ex.Message);
-                }
-                finally
-                {
-                    if (oWB != null) oWB.Close();
-                    if (oXL != null) oXL.Quit();
+                    package.Dispose();
                 }
             }
         }

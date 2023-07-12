@@ -21,3 +21,10 @@ C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\ob
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.exe
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.pdb
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.Form_PropTransfer.resources
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Debug\EPPlus.dll
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Debug\EPPlus.Interfaces.dll
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Debug\EPPlus.System.Drawing.dll
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Debug\Microsoft.IO.RecyclableMemoryStream.dll
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Debug\EPPlus.xml
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Debug\Microsoft.IO.RecyclableMemoryStream.xml
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.CopyComplete
