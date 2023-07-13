@@ -28,20 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.Btn_MainSheetSelector = new System.Windows.Forms.Button();
             this.Btn_ModelSheetSelector = new System.Windows.Forms.Button();
             this.Btn_DataTransfer = new System.Windows.Forms.Button();
+            this.Btn_MainSheetSelector = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // Btn_MainSheetSelector
-            // 
-            this.Btn_MainSheetSelector.Location = new System.Drawing.Point(84, 63);
-            this.Btn_MainSheetSelector.Name = "Btn_MainSheetSelector";
-            this.Btn_MainSheetSelector.Size = new System.Drawing.Size(75, 23);
-            this.Btn_MainSheetSelector.TabIndex = 0;
-            this.Btn_MainSheetSelector.Text = "button1";
-            this.Btn_MainSheetSelector.UseVisualStyleBackColor = true;
-            this.Btn_MainSheetSelector.Click += new System.EventHandler(this.Btn_FileSelector_Click);
             // 
             // Btn_ModelSheetSelector
             // 
@@ -63,14 +53,24 @@
             this.Btn_DataTransfer.UseVisualStyleBackColor = true;
             this.Btn_DataTransfer.Click += new System.EventHandler(this.Btn_DataTransfer_Click);
             // 
+            // Btn_MainSheetSelector
+            // 
+            this.Btn_MainSheetSelector.Location = new System.Drawing.Point(85, 63);
+            this.Btn_MainSheetSelector.Name = "Btn_MainSheetSelector";
+            this.Btn_MainSheetSelector.Size = new System.Drawing.Size(75, 23);
+            this.Btn_MainSheetSelector.TabIndex = 3;
+            this.Btn_MainSheetSelector.Text = "button1";
+            this.Btn_MainSheetSelector.UseVisualStyleBackColor = true;
+            this.Btn_MainSheetSelector.Click += new System.EventHandler(this.Btn_MainSheetSelector_Click);
+            // 
             // Form_PropTransfer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.Btn_MainSheetSelector);
             this.Controls.Add(this.Btn_DataTransfer);
             this.Controls.Add(this.Btn_ModelSheetSelector);
-            this.Controls.Add(this.Btn_MainSheetSelector);
             this.Name = "Form_PropTransfer";
             this.Text = "PropPro Assistant";
             this.ResumeLayout(false);
@@ -78,8 +78,8 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button Btn_MainSheetSelector;
         private System.Windows.Forms.Button Btn_ModelSheetSelector;
         private System.Windows.Forms.Button Btn_DataTransfer;
+        private System.Windows.Forms.Button Btn_MainSheetSelector;
     }
 }
