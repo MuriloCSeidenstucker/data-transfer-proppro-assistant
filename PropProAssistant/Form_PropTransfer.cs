@@ -12,8 +12,8 @@ namespace PropProAssistant
         private Label Lbl_DebugLabel;
         private Label Lbl_DebugMenuLabel;
 
-        private string _pathMainSheet;
-        private string _pathModelSheet;
+        private string _pathMainSheet = string.Empty;
+        private string _pathModelSheet = string.Empty;
 
         public Form_PropTransfer()
         {
@@ -57,30 +57,41 @@ namespace PropProAssistant
 
         private void Btn_MainSheetSelector_Click(object sender, EventArgs e)
         {
-            OpenFileDialog fileSelector = new OpenFileDialog();
-            fileSelector.Title = "Selecionar Planilha Origem";
-            fileSelector.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
-
-            if (fileSelector.ShowDialog() == DialogResult.OK)
+            using (var fileSelector = new OpenFileDialog())
             {
-                _pathMainSheet = fileSelector.FileName;
+                fileSelector.Title = "Selecionar Planilha Origem";
+                fileSelector.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+
+                if (fileSelector.ShowDialog() == DialogResult.OK)
+                {
+                    _pathMainSheet = fileSelector.FileName;
+                }
             }
         }
 
         private void Btn_ModelSheetSelector_Click(object sender, EventArgs e)
         {
-            OpenFileDialog fileSelector = new OpenFileDialog();
-            fileSelector.Title = "Selecionar Planilha Modelo";
-            fileSelector.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
-
-            if (fileSelector.ShowDialog() == DialogResult.OK)
+            using (var fileSelector = new OpenFileDialog())
             {
-                _pathModelSheet = fileSelector.FileName;
+                fileSelector.Title = "Selecionar Planilha Modelo";
+                fileSelector.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+
+                if (fileSelector.ShowDialog() == DialogResult.OK)
+                {
+                    _pathModelSheet = fileSelector.FileName;
+                }
             }
         }
 
         private void Btn_DataTransfer_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(_pathMainSheet) || string.IsNullOrEmpty(_pathModelSheet))
+            {
+                MessageBox.Show("Você deve selecionar uma planilha antes", "Erro - Planilha não selecionada",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             using (var mainPackage = new ExcelPackage(new FileInfo(_pathMainSheet)))
@@ -117,6 +128,13 @@ namespace PropProAssistant
 
         private void Btn_ResetButton_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(_pathModelSheet))
+            {
+                MessageBox.Show("Você deve selecionar uma planilha antes", "Erro - Planilha não selecionada",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             using (var modelPackage = new ExcelPackage(new FileInfo(_pathModelSheet)))
