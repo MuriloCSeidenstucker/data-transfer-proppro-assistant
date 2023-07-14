@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace PropProAssistant
@@ -67,6 +68,20 @@ namespace PropProAssistant
                     if (IsExcelFile(fileSelector.FileName))
                     {
                         _pathMainWorksheet = fileSelector.FileName;
+
+                        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                        using (var package = new ExcelPackage(new FileInfo(_pathMainWorksheet)))
+                        {
+                            var worksheet = package.Workbook.Worksheets[0];
+
+                            if (!IsMainWorksheetValid(worksheet))
+                            {
+                                MessageBox.Show("A planilha selecionada não possui a estrutura esperada.", "Erro - Planilha inválida",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                _pathMainWorksheet = string.Empty;
+                            }
+                            package.Dispose();
+                        }
                     }
                     else
                     {
@@ -182,9 +197,55 @@ namespace PropProAssistant
                    extension.Equals(".xlsm", StringComparison.OrdinalIgnoreCase);
         }
 
+        private bool IsColumnFilled(ExcelWorksheet worksheet, int column)
+        {
+            int lastRow = worksheet.Dimension?.End.Row ?? 0;
+
+            for (int row = 2; row <= lastRow; row++)
+            {
+                if (worksheet.Cells[row, column].Value == null)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private bool IsMainWorksheetValid(ExcelWorksheet worksheet)
         {
-            return false;
+            if (worksheet.Dimension?.Rows < 2) return false;
+
+            if (worksheet.Cells[1, 7].Value?.ToString() == null) return false;
+
+            if (worksheet.Cells[1, 1].Value?.ToString() != "ITEM"
+                || worksheet.Cells[1, 2].Value?.ToString() != "DESCRIÇÃO"
+                || worksheet.Cells[1, 3].Value?.ToString() != "UND"
+                || worksheet.Cells[1, 4].Value?.ToString() != "QTD"
+                || worksheet.Cells[1, 5].Value?.ToString() != "MARCA"
+                || worksheet.Cells[1, 6].Value?.ToString() != "VALOR DE CUSTO"
+                || !Regex.IsMatch(worksheet.Cells[1, 7].Value?.ToString(), @"CUSTO\s*\+\s*\d+%")
+                || worksheet.Cells[1, 8].Value?.ToString() != "VALOR TOTAL"
+                || worksheet.Cells[1, 9].Value?.ToString() != "PERCENTUAL MÍNIMO"
+                || worksheet.Cells[1, 10].Value?.ToString() != "VALOR MÍNIMO"
+                || worksheet.Cells[1, 11].Value?.ToString() != "LANCE ATUAL"
+                || worksheet.Cells[1, 12].Value?.ToString() != "POSIÇÃO"
+                || worksheet.Cells[1, 13].Value?.ToString() != "VALOR TOTAL DO LANCE")
+            {
+                return false;
+            }
+
+            if (!IsColumnFilled(worksheet, 1)
+                || !IsColumnFilled(worksheet, 2)
+                || !IsColumnFilled(worksheet, 3)
+                || !IsColumnFilled(worksheet, 4)
+                || !IsColumnFilled(worksheet, 5)
+                || !IsColumnFilled(worksheet, 6))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
