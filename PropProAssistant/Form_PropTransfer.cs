@@ -12,18 +12,18 @@ namespace PropProAssistant
         private Label Lbl_DebugLabel;
         private Label Lbl_DebugMenuLabel;
 
-        private string _pathMainSheet = string.Empty;
-        private string _pathModelSheet = string.Empty;
+        private string _pathMainWorksheet = string.Empty;
+        private string _pathModelWorksheet = string.Empty;
 
         public Form_PropTransfer()
         {
             InitializeComponent();
 
-            Btn_MainSheetSelector.Text = "Selecionar Planilha Origem";
-            Btn_MainSheetSelector.AutoSize = true;
+            Btn_MainWorksheetSelector.Text = "Selecionar Planilha Origem";
+            Btn_MainWorksheetSelector.AutoSize = true;
 
-            Btn_ModelSheetSelector.Text = "Selecionar Planilha Modelo";
-            Btn_ModelSheetSelector.AutoSize = true;
+            Btn_ModelWorksheetSelector.Text = "Selecionar Planilha Modelo";
+            Btn_ModelWorksheetSelector.AutoSize = true;
 
             Btn_DataTransfer.Text = "Transferir Dados";
             Btn_DataTransfer.AutoSize = true;
@@ -55,7 +55,7 @@ namespace PropProAssistant
 #endif
         }
 
-        private void Btn_MainSheetSelector_Click(object sender, EventArgs e)
+        private void Btn_MainWorksheetSelector_Click(object sender, EventArgs e)
         {
             using (var fileSelector = new OpenFileDialog())
             {
@@ -64,12 +64,21 @@ namespace PropProAssistant
 
                 if (fileSelector.ShowDialog() == DialogResult.OK)
                 {
-                    _pathMainSheet = fileSelector.FileName;
+                    if (IsExcelFile(fileSelector.FileName))
+                    {
+                        _pathMainWorksheet = fileSelector.FileName;
+                    }
+                    else
+                    {
+                        MessageBox.Show("O arquivo selecionado não é um arquivo Excel válido.",
+                            "Erro - Formato de arquivo inválido", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
 
-        private void Btn_ModelSheetSelector_Click(object sender, EventArgs e)
+        private void Btn_ModelWorksheetSelector_Click(object sender, EventArgs e)
         {
             using (var fileSelector = new OpenFileDialog())
             {
@@ -78,14 +87,23 @@ namespace PropProAssistant
 
                 if (fileSelector.ShowDialog() == DialogResult.OK)
                 {
-                    _pathModelSheet = fileSelector.FileName;
+                    if (IsExcelFile(fileSelector.FileName))
+                    {
+                        _pathModelWorksheet = fileSelector.FileName;
+                    }
+                    else
+                    {
+                        MessageBox.Show("O arquivo selecionado não é um arquivo Excel válido.",
+                            "Erro - Formato de arquivo inválido",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
 
         private void Btn_DataTransfer_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(_pathMainSheet) || string.IsNullOrEmpty(_pathModelSheet))
+            if (string.IsNullOrEmpty(_pathMainWorksheet) || string.IsNullOrEmpty(_pathModelWorksheet))
             {
                 MessageBox.Show("Você deve selecionar uma planilha antes", "Erro - Planilha não selecionada",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -94,25 +112,25 @@ namespace PropProAssistant
             
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            using (var mainPackage = new ExcelPackage(new FileInfo(_pathMainSheet)))
-            using (var modelPackage = new ExcelPackage(new FileInfo(_pathModelSheet)))
+            using (var mainPackage = new ExcelPackage(new FileInfo(_pathMainWorksheet)))
+            using (var modelPackage = new ExcelPackage(new FileInfo(_pathModelWorksheet)))
             {
-                var mainSheet = mainPackage.Workbook.Worksheets[0];
-                var modelSheet = modelPackage.Workbook.Worksheets[0];
+                var mainWorksheet = mainPackage.Workbook.Worksheets[0];
+                var modelWorksheet = modelPackage.Workbook.Worksheets[0];
 
                 int mainRow = 2;
 
-                for (int i = 2; i < modelSheet.Dimension.End.Row; i++)
+                for (int i = 2; i < modelWorksheet.Dimension.End.Row; i++)
                 {
-                    if (mainRow > mainSheet.Dimension.End.Row) break;
+                    if (mainRow > mainWorksheet.Dimension.End.Row) break;
 
-                    if (int.TryParse(modelSheet.Cells[i, 1].Value.ToString(), out var modelItem)
-                        && int.TryParse(mainSheet.Cells[mainRow, 1].Value.ToString(), out var mainItem)
+                    if (int.TryParse(modelWorksheet.Cells[i, 1].Value.ToString(), out var modelItem)
+                        && int.TryParse(mainWorksheet.Cells[mainRow, 1].Value.ToString(), out var mainItem)
                         && modelItem == mainItem)
                     {
-                        modelSheet.Cells[i, 3].Value = mainSheet.Cells[mainRow, 7].Value;
-                        modelSheet.Cells[i, 4].Value = mainSheet.Cells[mainRow, 5].Value;
-                        modelSheet.Cells[i, 5].Value = mainSheet.Cells[mainRow, 5].Value;
+                        modelWorksheet.Cells[i, 3].Value = mainWorksheet.Cells[mainRow, 7].Value;
+                        modelWorksheet.Cells[i, 4].Value = mainWorksheet.Cells[mainRow, 5].Value;
+                        modelWorksheet.Cells[i, 5].Value = mainWorksheet.Cells[mainRow, 5].Value;
                         mainRow++;
                     }
                 }
@@ -128,7 +146,7 @@ namespace PropProAssistant
 
         private void Btn_ResetButton_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(_pathModelSheet))
+            if (string.IsNullOrEmpty(_pathModelWorksheet))
             {
                 MessageBox.Show("Você deve selecionar uma planilha antes", "Erro - Planilha não selecionada",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -137,15 +155,15 @@ namespace PropProAssistant
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            using (var modelPackage = new ExcelPackage(new FileInfo(_pathModelSheet)))
+            using (var modelPackage = new ExcelPackage(new FileInfo(_pathModelWorksheet)))
             {
-                var modelSheet = modelPackage.Workbook.Worksheets[0];
+                var modelWorksheet = modelPackage.Workbook.Worksheets[0];
 
-                for (int i = 2; i < modelSheet.Dimension.End.Row; i++)
+                for (int i = 2; i < modelWorksheet.Dimension.End.Row; i++)
                 {
-                    modelSheet.Cells[i, 3].Value = string.Empty;
-                    modelSheet.Cells[i, 4].Value = string.Empty;
-                    modelSheet.Cells[i, 5].Value = string.Empty;
+                    modelWorksheet.Cells[i, 3].Value = string.Empty;
+                    modelWorksheet.Cells[i, 4].Value = string.Empty;
+                    modelWorksheet.Cells[i, 5].Value = string.Empty;
                 }
 
                 modelPackage.Save();
@@ -154,6 +172,19 @@ namespace PropProAssistant
 
                 if (modelPackage != null) modelPackage.Dispose();
             }
+        }
+
+        private bool IsExcelFile(string filePath)
+        {
+            string extension = Path.GetExtension(filePath);
+            return extension.Equals(".xls", StringComparison.OrdinalIgnoreCase) ||
+                   extension.Equals(".xlsx", StringComparison.OrdinalIgnoreCase) ||
+                   extension.Equals(".xlsm", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool IsMainWorksheetValid(ExcelWorksheet worksheet)
+        {
+            return false;
         }
     }
 }

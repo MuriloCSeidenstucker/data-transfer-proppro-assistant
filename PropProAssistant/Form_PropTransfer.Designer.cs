@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.Btn_ModelSheetSelector = new System.Windows.Forms.Button();
+            this.Btn_ModelWorksheetSelector = new System.Windows.Forms.Button();
             this.Btn_DataTransfer = new System.Windows.Forms.Button();
-            this.Btn_MainSheetSelector = new System.Windows.Forms.Button();
+            this.Btn_MainWorksheetSelector = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Btn_ModelSheetSelector
             // 
-            this.Btn_ModelSheetSelector.Location = new System.Drawing.Point(435, 63);
-            this.Btn_ModelSheetSelector.Name = "Btn_ModelSheetSelector";
-            this.Btn_ModelSheetSelector.Size = new System.Drawing.Size(75, 23);
-            this.Btn_ModelSheetSelector.TabIndex = 1;
-            this.Btn_ModelSheetSelector.Text = "button1";
-            this.Btn_ModelSheetSelector.UseVisualStyleBackColor = true;
-            this.Btn_ModelSheetSelector.Click += new System.EventHandler(this.Btn_ModelSheetSelector_Click);
+            this.Btn_ModelWorksheetSelector.Location = new System.Drawing.Point(435, 63);
+            this.Btn_ModelWorksheetSelector.Name = "Btn_ModelSheetSelector";
+            this.Btn_ModelWorksheetSelector.Size = new System.Drawing.Size(75, 23);
+            this.Btn_ModelWorksheetSelector.TabIndex = 1;
+            this.Btn_ModelWorksheetSelector.Text = "button1";
+            this.Btn_ModelWorksheetSelector.UseVisualStyleBackColor = true;
+            this.Btn_ModelWorksheetSelector.Click += new System.EventHandler(this.Btn_ModelWorksheetSelector_Click);
             // 
             // Btn_DataTransfer
             // 
@@ -55,22 +55,22 @@
             // 
             // Btn_MainSheetSelector
             // 
-            this.Btn_MainSheetSelector.Location = new System.Drawing.Point(85, 63);
-            this.Btn_MainSheetSelector.Name = "Btn_MainSheetSelector";
-            this.Btn_MainSheetSelector.Size = new System.Drawing.Size(75, 23);
-            this.Btn_MainSheetSelector.TabIndex = 3;
-            this.Btn_MainSheetSelector.Text = "button1";
-            this.Btn_MainSheetSelector.UseVisualStyleBackColor = true;
-            this.Btn_MainSheetSelector.Click += new System.EventHandler(this.Btn_MainSheetSelector_Click);
+            this.Btn_MainWorksheetSelector.Location = new System.Drawing.Point(85, 63);
+            this.Btn_MainWorksheetSelector.Name = "Btn_MainSheetSelector";
+            this.Btn_MainWorksheetSelector.Size = new System.Drawing.Size(75, 23);
+            this.Btn_MainWorksheetSelector.TabIndex = 3;
+            this.Btn_MainWorksheetSelector.Text = "button1";
+            this.Btn_MainWorksheetSelector.UseVisualStyleBackColor = true;
+            this.Btn_MainWorksheetSelector.Click += new System.EventHandler(this.Btn_MainWorksheetSelector_Click);
             // 
             // Form_PropTransfer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.Btn_MainSheetSelector);
+            this.Controls.Add(this.Btn_MainWorksheetSelector);
             this.Controls.Add(this.Btn_DataTransfer);
-            this.Controls.Add(this.Btn_ModelSheetSelector);
+            this.Controls.Add(this.Btn_ModelWorksheetSelector);
             this.Name = "Form_PropTransfer";
             this.Text = "PropPro Assistant";
             this.ResumeLayout(false);
@@ -78,8 +78,8 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button Btn_ModelSheetSelector;
+        private System.Windows.Forms.Button Btn_ModelWorksheetSelector;
         private System.Windows.Forms.Button Btn_DataTransfer;
-        private System.Windows.Forms.Button Btn_MainSheetSelector;
+        private System.Windows.Forms.Button Btn_MainWorksheetSelector;
     }
 }
