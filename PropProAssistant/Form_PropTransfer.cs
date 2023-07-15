@@ -105,6 +105,20 @@ namespace PropProAssistant
                     if (IsExcelFile(fileSelector.FileName))
                     {
                         _pathModelWorksheet = fileSelector.FileName;
+
+                        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                        using (var package = new ExcelPackage(new FileInfo(_pathModelWorksheet)))
+                        {
+                            var worksheet = package.Workbook.Worksheets[0];
+
+                            if (!IsModelWorksheetValid(worksheet))
+                            {
+                                MessageBox.Show("A planilha selecionada não possui a estrutura esperada.", "Erro - Planilha inválida",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                _pathModelWorksheet = string.Empty;
+                            }
+                            package.Dispose();
+                        }
                     }
                     else
                     {
@@ -241,6 +255,28 @@ namespace PropProAssistant
                 || !IsColumnFilled(worksheet, 4)
                 || !IsColumnFilled(worksheet, 5)
                 || !IsColumnFilled(worksheet, 6))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsModelWorksheetValid(ExcelWorksheet worksheet)
+        {
+            if (worksheet.Dimension?.Rows < 2) return false;
+
+            if (worksheet.Cells[1, 1].Value?.ToString() != "Lote"
+                || worksheet.Cells[1, 2].Value?.ToString() != "Item"
+                || worksheet.Cells[1, 3].Value?.ToString() != "Valor Prop."
+                || worksheet.Cells[1, 4].Value?.ToString() != "Marca"
+                || worksheet.Cells[1, 5].Value?.ToString() != "Modelo")
+            {
+                return false;
+            }
+
+            if (!IsColumnFilled(worksheet, 1)
+                || !IsColumnFilled(worksheet, 2))
             {
                 return false;
             }

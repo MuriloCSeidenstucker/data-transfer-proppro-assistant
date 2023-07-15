@@ -59,25 +59,5 @@ namespace PropProAssistant.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Consulta um recurso localizado do tipo System.Byte[].
-        /// </summary>
-        internal static byte[] Modelo_BNC {
-            get {
-                object obj = ResourceManager.GetObject("Modelo_BNC", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Consulta um recurso localizado do tipo System.Byte[].
-        /// </summary>
-        internal static byte[] Modelo_Pessoal {
-            get {
-                object obj = ResourceManager.GetObject("Modelo_Pessoal", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }
