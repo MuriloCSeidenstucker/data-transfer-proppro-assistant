@@ -1,6 +1,5 @@
 ﻿using OfficeOpenXml;
 using System;
-using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -19,7 +18,12 @@ namespace PropProAssistant
         public Form_PropTransfer()
         {
             InitializeComponent();
+            InitializeButtons();
+            InitializeDebug();
+        }
 
+        private void InitializeButtons()
+        {
             Btn_MainWorksheetSelector.Text = "Selecionar Planilha Origem";
             Btn_MainWorksheetSelector.AutoSize = true;
 
@@ -28,31 +32,12 @@ namespace PropProAssistant
 
             Btn_DataTransfer.Text = "Transferir Dados";
             Btn_DataTransfer.AutoSize = true;
+        }
 
+        private void InitializeDebug()
+        {
 #if DEBUG
-            Lbl_DebugLabel = new Label();
-            Lbl_DebugLabel.Text = "DEBUG MODE";
-            Lbl_DebugLabel.ForeColor = Color.Red;
-            Lbl_DebugLabel.Font = new Font(Font.FontFamily, 12, FontStyle.Bold);
-            Lbl_DebugLabel.AutoSize = true;
-            Lbl_DebugLabel.Location = new Point(ClientSize.Width - Lbl_DebugLabel.Width - 50, ClientSize.Height - Lbl_DebugLabel.Height - 10);
-            Lbl_DebugLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            this.Controls.Add(Lbl_DebugLabel);
-
-            Lbl_DebugMenuLabel = new Label();
-            Lbl_DebugMenuLabel.Text = "DEBUG MENU";
-            Lbl_DebugMenuLabel.ForeColor = Color.Red;
-            Lbl_DebugMenuLabel.Font = new Font(Font.FontFamily, 12, FontStyle.Bold);
-            Lbl_DebugMenuLabel.AutoSize = true;
-            Lbl_DebugMenuLabel.Location = new Point(ClientSize.Width - Lbl_DebugMenuLabel.Width - 50, ClientSize.Height - Lbl_DebugMenuLabel.Height - 100);
-            Lbl_DebugMenuLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            this.Controls.Add(Lbl_DebugMenuLabel);
-
-            Btn_ResetButton = new Button();
-            Btn_ResetButton.Text = "Reset";
-            Btn_ResetButton.Location = new Point(ClientSize.Width - Btn_ResetButton.Width - 50, ClientSize.Height - Btn_ResetButton.Height - 80);
-            Btn_ResetButton.Click += new System.EventHandler(Btn_ResetButton_Click);
-            this.Controls.Add(Btn_ResetButton);
+            DebugComponent.InitializeDebugControls(this);
 #endif
         }
 
@@ -80,7 +65,7 @@ namespace PropProAssistant
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 _pathMainWorksheet = string.Empty;
                             }
-                            package.Dispose();
+                            if (package != null) package.Dispose();
                         }
                     }
                     else
@@ -117,7 +102,7 @@ namespace PropProAssistant
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 _pathModelWorksheet = string.Empty;
                             }
-                            package.Dispose();
+                            if (package != null) package.Dispose();
                         }
                     }
                     else
@@ -149,7 +134,7 @@ namespace PropProAssistant
 
                 int mainRow = 2;
 
-                for (int i = 2; i < modelWorksheet.Dimension.End.Row; i++)
+                for (int i = 2; i <= modelWorksheet.Dimension.End.Row; i++)
                 {
                     if (mainRow > mainWorksheet.Dimension.End.Row) break;
 
@@ -173,7 +158,7 @@ namespace PropProAssistant
             }
         }
 
-        private void Btn_ResetButton_Click(object sender, EventArgs e)
+        public void Btn_ResetButton_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(_pathModelWorksheet))
             {
@@ -188,7 +173,7 @@ namespace PropProAssistant
             {
                 var modelWorksheet = modelPackage.Workbook.Worksheets[0];
 
-                for (int i = 2; i < modelWorksheet.Dimension.End.Row; i++)
+                for (int i = 2; i <= modelWorksheet.Dimension.End.Row; i++)
                 {
                     modelWorksheet.Cells[i, 3].Value = string.Empty;
                     modelWorksheet.Cells[i, 4].Value = string.Empty;
