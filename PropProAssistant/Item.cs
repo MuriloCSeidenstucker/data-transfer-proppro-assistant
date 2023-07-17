@@ -1,8 +1,8 @@
 ﻿namespace PropProAssistant
 {
-    public class ProposalData
+    public class Item
     {
-        public int Item { get; set; }
+        public int Number { get; set; }
         public string Description { get; set; }
         public string Unit { get; set; }
         public int Amount { get; set; }

@@ -1,5 +1,6 @@
 ﻿using OfficeOpenXml;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -8,9 +9,7 @@ namespace PropProAssistant
 {
     public partial class Form_PropTransfer : Form
     {
-        private Button Btn_ResetButton;
-        private Label Lbl_DebugLabel;
-        private Label Lbl_DebugMenuLabel;
+        private Dictionary<int, Item> _items = new Dictionary<int, Item>();
 
         private string _pathMainWorksheet = string.Empty;
         private string _pathModelWorksheet = string.Empty;
@@ -58,12 +57,53 @@ namespace PropProAssistant
                         using (var package = new ExcelPackage(new FileInfo(_pathMainWorksheet)))
                         {
                             var worksheet = package.Workbook.Worksheets[0];
+                            var itemCol = 0;
+                            var brandCol = 0;
+                            var unitPriceCol = 0;
 
                             if (!IsMainWorksheetValid(worksheet))
                             {
                                 MessageBox.Show("A planilha selecionada não possui a estrutura esperada.", "Erro - Planilha inválida",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 _pathMainWorksheet = string.Empty;
+                            }
+                            else
+                            {
+                                for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+                                {
+                                    if (worksheet.Cells[1, col].Value?.ToString() == "ITEM")
+                                    {
+                                        itemCol = col;
+                                        continue;
+                                    }
+                                    if (worksheet.Cells[1, col].Value?.ToString() == "MARCA")
+                                    {
+                                        brandCol = col;
+                                        continue;
+                                    }
+                                    if (Regex.IsMatch(worksheet.Cells[1, col].Value?.ToString(), @"CUSTO\s*\+\s*\d+%"))
+                                    {
+                                        unitPriceCol = col;
+                                        break;
+                                    }
+                                }
+
+                                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                                {
+                                    int numberTemp = 0;
+                                    decimal unitValueTemp = 0;
+                                    if (int.TryParse(worksheet.Cells[row, itemCol].Value?.ToString(), out numberTemp)
+                                        && decimal.TryParse(worksheet.Cells[row, unitPriceCol].Value?.ToString(), out unitValueTemp))
+                                    {
+                                        _items.Add(numberTemp,
+                                            new Item
+                                            {
+                                                Number = numberTemp,
+                                                Brand = worksheet.Cells[row, brandCol].Value?.ToString(),
+                                                UnitValue = unitValueTemp
+                                            });
+                                    }
+                                }
                             }
                             if (package != null) package.Dispose();
                         }
@@ -139,12 +179,11 @@ namespace PropProAssistant
                     if (mainRow > mainWorksheet.Dimension.End.Row) break;
 
                     if (int.TryParse(modelWorksheet.Cells[i, 1].Value.ToString(), out var modelItem)
-                        && int.TryParse(mainWorksheet.Cells[mainRow, 1].Value.ToString(), out var mainItem)
-                        && modelItem == mainItem)
+                        && _items.ContainsKey(modelItem))
                     {
-                        modelWorksheet.Cells[i, 3].Value = mainWorksheet.Cells[mainRow, 7].Value;
-                        modelWorksheet.Cells[i, 4].Value = mainWorksheet.Cells[mainRow, 5].Value;
-                        modelWorksheet.Cells[i, 5].Value = mainWorksheet.Cells[mainRow, 5].Value;
+                        modelWorksheet.Cells[i, 3].Value = _items[modelItem].UnitValue;
+                        modelWorksheet.Cells[i, 4].Value = _items[modelItem].Brand;
+                        modelWorksheet.Cells[i, 5].Value = _items[modelItem].Brand;
                         mainRow++;
                     }
                 }
