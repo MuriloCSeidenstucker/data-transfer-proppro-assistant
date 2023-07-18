@@ -72,6 +72,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Item.cs" />
+    <Compile Include="ModelWorksheet.cs" />
     <EmbeddedResource Include="Form_PropTransfer.resx">
       <DependentUpon>Form_PropTransfer.cs</DependentUpon>
     </EmbeddedResource>
@@ -89,6 +90,8 @@
     <None Include="Models\BNC\BNC_03.xlsx" />
     <None Include="Models\BNC\BNC_01.xlsx" />
     <None Include="Models\BNC\BNC_04.xlsx" />
+    <None Include="Models\PortalCompPubl\PCP_01.xlsx" />
+    <None Include="Models\PortalCompPubl\PCP_02.xlsx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -102,8 +105,6 @@
     <None Include="Models\LicitaNet\LN_01.xlsx" />
     <None Include="Models\LicitaNet\LN_02.xlsx" />
     <None Include="Models\Price_Bid_Model.xlsm" />
-    <None Include="Models\PortalCompPubl\PCP_02.csv" />
-    <None Include="Models\PortalCompPubl\PCP_01.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

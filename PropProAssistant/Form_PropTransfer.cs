@@ -10,6 +10,7 @@ namespace PropProAssistant
     public partial class Form_PropTransfer : Form
     {
         private Dictionary<int, Item> _items = new Dictionary<int, Item>();
+        private ModelWorksheet _modelWorksheet = new ModelWorksheet();
 
         private string _pathMainWorksheet = string.Empty;
         private string _pathModelWorksheet = string.Empty;
@@ -136,11 +137,93 @@ namespace PropProAssistant
                         {
                             var worksheet = package.Workbook.Worksheets[0];
 
-                            if (!IsModelWorksheetValid(worksheet))
+                            if (false/*!IsModelWorksheetValid(worksheet)*/)
                             {
                                 MessageBox.Show("A planilha selecionada não possui a estrutura esperada.", "Erro - Planilha inválida",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 _pathModelWorksheet = string.Empty;
+                            }
+                            else
+                            {
+                                for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+                                {
+                                    if (_modelWorksheet.AmountCol == 0
+                                        && worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("QUANTIDADE") == true)
+                                    {
+                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                                        _modelWorksheet.AmountCol = col;
+                                    }
+                                    if (_modelWorksheet.AnvisaRegCol == 0
+                                        && worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("ANVISA") == true)
+                                    {
+                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                                        _modelWorksheet.AnvisaRegCol = col;
+                                    }
+                                    if (_modelWorksheet.BrandCol == 0
+                                        && (worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("MARCA") == true
+                                        || worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("FABRICANTE") == true))
+                                    {
+                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                                        _modelWorksheet.BrandCol = col;
+                                    }
+                                    if (_modelWorksheet.DescriptionCol == 0
+                                        && (worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("DESCRIÇÃO") == true
+                                        || worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("PRODUTO") == true))
+                                    {
+                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                                        _modelWorksheet.DescriptionCol = col;
+                                    }
+                                    if (_modelWorksheet.ItemCol == 0
+                                        && (worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("ITEM") == true
+                                        || worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("LOTE") == true))
+                                    {
+                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                                        _modelWorksheet.ItemCol = col;
+                                    }
+                                    if (_modelWorksheet.ModelCol == 0
+                                        && worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("MODELO") == true)
+                                    {
+                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                                        _modelWorksheet.ModelCol = col;
+                                    }
+                                    if (_modelWorksheet.TotalValueCol == 0
+                                        && worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("TOTAL") == true)
+                                    {
+                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                                        _modelWorksheet.TotalValueCol = col;
+                                    }
+                                    if (_modelWorksheet.UnitValueCol == 0
+                                        && (worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("UNITÁRIO") == true
+                                        || worksheet.Cells[1, col].Value?.ToString()
+                                        .ToUpperInvariant()
+                                        .Contains("PROP") == true))
+                                    {
+                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                                        _modelWorksheet.UnitValueCol = col;
+                                    }
+                                }
                             }
                             if (package != null) package.Dispose();
                         }
@@ -181,9 +264,9 @@ namespace PropProAssistant
                     if (int.TryParse(modelWorksheet.Cells[i, 1].Value.ToString(), out var modelItem)
                         && _items.ContainsKey(modelItem))
                     {
-                        modelWorksheet.Cells[i, 3].Value = _items[modelItem].UnitValue;
-                        modelWorksheet.Cells[i, 4].Value = _items[modelItem].Brand;
-                        modelWorksheet.Cells[i, 5].Value = _items[modelItem].Brand;
+                        modelWorksheet.Cells[i, _modelWorksheet.UnitValueCol].Value = _items[modelItem].UnitValue;
+                        modelWorksheet.Cells[i, _modelWorksheet.BrandCol].Value = _items[modelItem].Brand;
+                        modelWorksheet.Cells[i, _modelWorksheet.ModelCol].Value = _items[modelItem].Brand;
                         mainRow++;
                     }
                 }
@@ -214,9 +297,9 @@ namespace PropProAssistant
 
                 for (int i = 2; i <= modelWorksheet.Dimension.End.Row; i++)
                 {
-                    modelWorksheet.Cells[i, 3].Value = string.Empty;
-                    modelWorksheet.Cells[i, 4].Value = string.Empty;
-                    modelWorksheet.Cells[i, 5].Value = string.Empty;
+                    modelWorksheet.Cells[i, _modelWorksheet.BrandCol].Value = string.Empty;
+                    modelWorksheet.Cells[i, _modelWorksheet.ModelCol].Value = string.Empty;
+                    modelWorksheet.Cells[i, _modelWorksheet.UnitValueCol].Value = string.Empty;
                 }
 
                 modelPackage.Save();
