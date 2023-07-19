@@ -137,94 +137,13 @@ namespace PropProAssistant
                         {
                             var worksheet = package.Workbook.Worksheets[0];
 
-                            if (false/*!IsModelWorksheetValid(worksheet)*/)
+                            if (!IsModelWorksheetValid(worksheet))
                             {
                                 MessageBox.Show("A planilha selecionada não possui a estrutura esperada.", "Erro - Planilha inválida",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 _pathModelWorksheet = string.Empty;
                             }
-                            else
-                            {
-                                for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
-                                {
-                                    if (_modelWorksheet.AmountCol == 0
-                                        && worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("QUANTIDADE") == true)
-                                    {
-                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
-                                        _modelWorksheet.AmountCol = col;
-                                    }
-                                    if (_modelWorksheet.AnvisaRegCol == 0
-                                        && worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("ANVISA") == true)
-                                    {
-                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
-                                        _modelWorksheet.AnvisaRegCol = col;
-                                    }
-                                    if (_modelWorksheet.BrandCol == 0
-                                        && (worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("MARCA") == true
-                                        || worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("FABRICANTE") == true))
-                                    {
-                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
-                                        _modelWorksheet.BrandCol = col;
-                                    }
-                                    if (_modelWorksheet.DescriptionCol == 0
-                                        && (worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("DESCRIÇÃO") == true
-                                        || worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("PRODUTO") == true))
-                                    {
-                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
-                                        _modelWorksheet.DescriptionCol = col;
-                                    }
-                                    if (_modelWorksheet.ItemCol == 0
-                                        && (worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("ITEM") == true
-                                        || worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("LOTE") == true))
-                                    {
-                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
-                                        _modelWorksheet.ItemCol = col;
-                                    }
-                                    if (_modelWorksheet.ModelCol == 0
-                                        && worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("MODELO") == true)
-                                    {
-                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
-                                        _modelWorksheet.ModelCol = col;
-                                    }
-                                    if (_modelWorksheet.TotalValueCol == 0
-                                        && worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("TOTAL") == true)
-                                    {
-                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
-                                        _modelWorksheet.TotalValueCol = col;
-                                    }
-                                    if (_modelWorksheet.UnitValueCol == 0
-                                        && (worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("UNITÁRIO") == true
-                                        || worksheet.Cells[1, col].Value?.ToString()
-                                        .ToUpperInvariant()
-                                        .Contains("PROP") == true))
-                                    {
-                                        Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
-                                        _modelWorksheet.UnitValueCol = col;
-                                    }
-                                }
-                            }
+
                             if (package != null) package.Dispose();
                         }
                     }
@@ -318,19 +237,19 @@ namespace PropProAssistant
                    extension.Equals(".xlsm", StringComparison.OrdinalIgnoreCase);
         }
 
-        private bool IsColumnFilled(ExcelWorksheet worksheet, int column)
+        private bool IsSomeColumnCellFilled(ExcelWorksheet worksheet, int column)
         {
             int lastRow = worksheet.Dimension?.End.Row ?? 0;
 
             for (int row = 2; row <= lastRow; row++)
             {
-                if (worksheet.Cells[row, column].Value == null)
+                if (!string.IsNullOrEmpty(worksheet.Cells[row, column].Value?.ToString()))
                 {
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
         }
 
         private bool IsMainWorksheetValid(ExcelWorksheet worksheet)
@@ -356,12 +275,12 @@ namespace PropProAssistant
                 return false;
             }
 
-            if (!IsColumnFilled(worksheet, 1)
-                || !IsColumnFilled(worksheet, 2)
-                || !IsColumnFilled(worksheet, 3)
-                || !IsColumnFilled(worksheet, 4)
-                || !IsColumnFilled(worksheet, 5)
-                || !IsColumnFilled(worksheet, 6))
+            if (!IsSomeColumnCellFilled(worksheet, 1)
+                || !IsSomeColumnCellFilled(worksheet, 2)
+                || !IsSomeColumnCellFilled(worksheet, 3)
+                || !IsSomeColumnCellFilled(worksheet, 4)
+                || !IsSomeColumnCellFilled(worksheet, 5)
+                || !IsSomeColumnCellFilled(worksheet, 6))
             {
                 return false;
             }
@@ -373,17 +292,116 @@ namespace PropProAssistant
         {
             if (worksheet.Dimension?.Rows < 2) return false;
 
-            if (worksheet.Cells[1, 1].Value?.ToString() != "Lote"
-                || worksheet.Cells[1, 2].Value?.ToString() != "Item"
-                || worksheet.Cells[1, 3].Value?.ToString() != "Valor Prop."
-                || worksheet.Cells[1, 4].Value?.ToString() != "Marca"
-                || worksheet.Cells[1, 5].Value?.ToString() != "Modelo")
+            for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+            {
+                if (_modelWorksheet.BrandCol == 0
+                    && (worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("MARCA") == true
+                    || worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("FABRICANTE") == true))
+                {
+                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                    _modelWorksheet.BrandCol = col;
+                    continue;
+                }
+                if (_modelWorksheet.ItemCol == 0
+                    && (worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("ITEM") == true
+                    || worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("LOTE") == true))
+                {
+                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                    _modelWorksheet.ItemCol = col;
+                    continue;
+                }
+                if (_modelWorksheet.ModelCol == 0
+                    && worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("MODELO") == true)
+                {
+                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                    _modelWorksheet.ModelCol = col;
+                    continue;
+                }
+                if (_modelWorksheet.UnitValueCol == 0
+                    && (worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("UNITÁRIO") == true
+                    || worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("PROP") == true))
+                {
+                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                    _modelWorksheet.UnitValueCol = col;
+                    continue;
+                }
+                if (_modelWorksheet.AmountCol == 0
+                    && worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("QUANTIDADE") == true)
+                {
+                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                    _modelWorksheet.AmountCol = col;
+                    continue;
+                }
+                if (_modelWorksheet.AnvisaRegCol == 0
+                    && worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("ANVISA") == true)
+                {
+                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                    _modelWorksheet.AnvisaRegCol = col;
+                    continue;
+                }
+                if (_modelWorksheet.DescriptionCol == 0
+                    && (worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("DESCRIÇÃO") == true
+                    || worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("PRODUTO") == true))
+                {
+                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                    _modelWorksheet.DescriptionCol = col;
+                    continue;
+                }
+                if (_modelWorksheet.TotalValueCol == 0
+                    && worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant()
+                    .Contains("TOTAL") == true)
+                {
+                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
+                    _modelWorksheet.TotalValueCol = col;
+                    continue;
+                }
+            }
+
+            if (_modelWorksheet.ItemCol == 0
+                || _modelWorksheet.BrandCol == 0
+                || _modelWorksheet.ModelCol == 0
+                || _modelWorksheet.UnitValueCol == 0)
             {
                 return false;
             }
 
-            if (!IsColumnFilled(worksheet, 1)
-                || !IsColumnFilled(worksheet, 2))
+            if (IsSomeColumnCellFilled(worksheet, _modelWorksheet.UnitValueCol))
+            {
+                var option = MessageBox.Show("A planilha parece já estar preenchida. Deseja continuar?",
+                    "Planilha Preenchida",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (option == DialogResult.No)
+                {
+                    return false;
+                }
+            }
+
+            if (!IsSomeColumnCellFilled(worksheet, _modelWorksheet.ItemCol))
             {
                 return false;
             }
