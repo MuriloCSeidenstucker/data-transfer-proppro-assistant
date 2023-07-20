@@ -30,13 +30,13 @@
         {
             this.Btn_ModelWorksheetSelector = new System.Windows.Forms.Button();
             this.Btn_DataTransfer = new System.Windows.Forms.Button();
-            this.Btn_MainWorksheetSelector = new System.Windows.Forms.Button();
+            this.Btn_PriceBidWorksheetSelector = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // Btn_ModelSheetSelector
+            // Btn_ModelWorksheetSelector
             // 
             this.Btn_ModelWorksheetSelector.Location = new System.Drawing.Point(435, 63);
-            this.Btn_ModelWorksheetSelector.Name = "Btn_ModelSheetSelector";
+            this.Btn_ModelWorksheetSelector.Name = "Btn_ModelWorksheetSelector";
             this.Btn_ModelWorksheetSelector.Size = new System.Drawing.Size(75, 23);
             this.Btn_ModelWorksheetSelector.TabIndex = 1;
             this.Btn_ModelWorksheetSelector.Text = "button1";
@@ -53,22 +53,22 @@
             this.Btn_DataTransfer.UseVisualStyleBackColor = true;
             this.Btn_DataTransfer.Click += new System.EventHandler(this.Btn_DataTransfer_Click);
             // 
-            // Btn_MainSheetSelector
+            // Btn_PriceBidWorksheetSelector
             // 
-            this.Btn_MainWorksheetSelector.Location = new System.Drawing.Point(85, 63);
-            this.Btn_MainWorksheetSelector.Name = "Btn_MainSheetSelector";
-            this.Btn_MainWorksheetSelector.Size = new System.Drawing.Size(75, 23);
-            this.Btn_MainWorksheetSelector.TabIndex = 3;
-            this.Btn_MainWorksheetSelector.Text = "button1";
-            this.Btn_MainWorksheetSelector.UseVisualStyleBackColor = true;
-            this.Btn_MainWorksheetSelector.Click += new System.EventHandler(this.Btn_MainWorksheetSelector_Click);
+            this.Btn_PriceBidWorksheetSelector.Location = new System.Drawing.Point(85, 63);
+            this.Btn_PriceBidWorksheetSelector.Name = "Btn_PriceBidWorksheetSelector";
+            this.Btn_PriceBidWorksheetSelector.Size = new System.Drawing.Size(75, 23);
+            this.Btn_PriceBidWorksheetSelector.TabIndex = 3;
+            this.Btn_PriceBidWorksheetSelector.Text = "button1";
+            this.Btn_PriceBidWorksheetSelector.UseVisualStyleBackColor = true;
+            this.Btn_PriceBidWorksheetSelector.Click += new System.EventHandler(this.Btn_PriceBidWorksheetSelector_Click);
             // 
             // Form_PropTransfer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.Btn_MainWorksheetSelector);
+            this.Controls.Add(this.Btn_PriceBidWorksheetSelector);
             this.Controls.Add(this.Btn_DataTransfer);
             this.Controls.Add(this.Btn_ModelWorksheetSelector);
             this.Name = "Form_PropTransfer";
@@ -80,6 +80,6 @@
         #endregion
         private System.Windows.Forms.Button Btn_ModelWorksheetSelector;
         private System.Windows.Forms.Button Btn_DataTransfer;
-        private System.Windows.Forms.Button Btn_MainWorksheetSelector;
+        private System.Windows.Forms.Button Btn_PriceBidWorksheetSelector;
     }
 }
