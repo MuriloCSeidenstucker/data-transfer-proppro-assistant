@@ -79,16 +79,20 @@ namespace PropProAssistant
                         for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                         {
                             int numberTemp = 0;
-                            decimal unitValueTemp = 0;
+                            decimal unitValueTemp = 0m;
+                            decimal totalValueTemp = 0m;
                             if (int.TryParse(worksheet.Cells[row, PriceBidWorksheet.ItemCol].Value?.ToString(), out numberTemp) &&
-                                decimal.TryParse(worksheet.Cells[row, PriceBidWorksheet.UnitPriceCol].Value?.ToString(), out unitValueTemp))
+                                decimal.TryParse(worksheet.Cells[row, PriceBidWorksheet.UnitPriceCol].Value?.ToString(), out unitValueTemp) &&
+                                decimal.TryParse(worksheet.Cells[row, PriceBidWorksheet.TotalPriceCol].Value?.ToString(), out totalValueTemp))
                             {
                                 _items.Add(numberTemp,
                                     new Item
                                     {
                                         Number = numberTemp,
                                         Brand = worksheet.Cells[row, PriceBidWorksheet.BrandCol].Value?.ToString(),
-                                        UnitValue = unitValueTemp
+                                        UnitValue = unitValueTemp,
+                                        Description = worksheet.Cells[row, PriceBidWorksheet.DescriptionCol].Value?.ToString(),
+                                        TotalValue = totalValueTemp
                                     });
                             }
                         }
@@ -144,11 +148,19 @@ namespace PropProAssistant
             
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            using (var priceBidPackage = new ExcelPackage(new FileInfo(_pathPriceBidWorksheet)))
             using (var modelPackage = new ExcelPackage(new FileInfo(_pathModelWorksheet)))
             {
-                var priceBidWorksheet = priceBidPackage.Workbook.Worksheets[0];
                 var modelWorksheet = modelPackage.Workbook.Worksheets[0];
+
+                if (_items.Count > modelWorksheet.Dimension.End.Row - 1)
+                {
+                    var option = MessageBox.Show("A quantidade de itens da proposta é maior do que da planilha modelo. Deseja continuar?",
+                    "Planilha Errada",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                    if (option == DialogResult.No) return;
+                }
 
                 if (IsSomeColumnCellFilled(modelWorksheet, _modelWorksheet.UnitValueCol))
                 {
@@ -162,16 +174,28 @@ namespace PropProAssistant
 
                 int priceBidRow = 2;
 
-                for (int i = 2; i <= modelWorksheet.Dimension.End.Row; i++)
+                for (int row = 2; row <= modelWorksheet.Dimension.End.Row; row++)
                 {
-                    if (priceBidRow > priceBidWorksheet.Dimension.End.Row) break;
+                    if (priceBidRow > _items.Count + 1) break;
 
-                    if (int.TryParse(modelWorksheet.Cells[i, 1].Value.ToString(), out var modelItem)
+                    if (int.TryParse(modelWorksheet.Cells[row, _modelWorksheet.ItemCol].Value.ToString(), out var modelItem)
                         && _items.ContainsKey(modelItem))
                     {
-                        modelWorksheet.Cells[i, _modelWorksheet.UnitValueCol].Value = _items[modelItem].UnitValue;
-                        modelWorksheet.Cells[i, _modelWorksheet.BrandCol].Value = _items[modelItem].Brand;
-                        modelWorksheet.Cells[i, _modelWorksheet.ModelCol].Value = _items[modelItem].Brand;
+                        modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = _items[modelItem].UnitValue;
+                        modelWorksheet.Cells[row, _modelWorksheet.BrandCol].Value = _items[modelItem].Brand;
+                        modelWorksheet.Cells[row, _modelWorksheet.ModelCol].Value = _items[modelItem].Brand;
+                        if (_modelWorksheet.DescriptionCol != 0)
+                        {
+                            modelWorksheet.Cells[row, _modelWorksheet.DescriptionCol].Value = _items[modelItem].Description;
+                        }
+                        if (_modelWorksheet.TotalValueCol != 0)
+                        {
+                            modelWorksheet.Cells[row, _modelWorksheet.TotalValueCol].Value = _items[modelItem].TotalValue;
+                        }
+                        //if (_modelWorksheet.AnvisaRegCol != 0)
+                        //{
+                        //    modelWorksheet.Cells[row, _modelWorksheet.AnvisaRegCol].Value = _items[modelItem].AnvisaReg;
+                        //}
                         priceBidRow++;
                     }
                 }
@@ -179,9 +203,6 @@ namespace PropProAssistant
                 modelPackage.Save();
 
                 MessageBox.Show("Transferência de dados concluida!");
-
-                if (priceBidPackage != null) priceBidPackage.Dispose();
-                if (modelPackage != null) modelPackage.Dispose();
             }
         }
 
@@ -200,11 +221,24 @@ namespace PropProAssistant
             {
                 var modelWorksheet = modelPackage.Workbook.Worksheets[0];
 
-                for (int i = 2; i <= modelWorksheet.Dimension.End.Row; i++)
+                for (int row = 2; row <= modelWorksheet.Dimension.End.Row; row++)
                 {
-                    modelWorksheet.Cells[i, _modelWorksheet.BrandCol].Value = string.Empty;
-                    modelWorksheet.Cells[i, _modelWorksheet.ModelCol].Value = string.Empty;
-                    modelWorksheet.Cells[i, _modelWorksheet.UnitValueCol].Value = string.Empty;
+                    modelWorksheet.Cells[row, _modelWorksheet.BrandCol].Value = string.Empty;
+                    modelWorksheet.Cells[row, _modelWorksheet.ModelCol].Value = string.Empty;
+                    modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = string.Empty;
+
+                    if (_modelWorksheet.DescriptionCol != 0)
+                    {
+                        modelWorksheet.Cells[row, _modelWorksheet.DescriptionCol].Value = string.Empty;
+                    }
+                    if (_modelWorksheet.TotalValueCol != 0)
+                    {
+                        modelWorksheet.Cells[row, _modelWorksheet.TotalValueCol].Value = string.Empty;
+                    }
+                    if (_modelWorksheet.AnvisaRegCol != 0)
+                    {
+                        modelWorksheet.Cells[row, _modelWorksheet.AnvisaRegCol].Value = string.Empty;
+                    }
                 }
 
                 modelPackage.Save();
@@ -268,85 +302,58 @@ namespace PropProAssistant
             {
                 if (_modelWorksheet.BrandCol == 0
                     && (worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("MARCA") == true
+                    .ToUpperInvariant().Contains("MARCA") == true
                     || worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("FABRICANTE") == true))
+                    .ToUpperInvariant().Contains("FABRICANTE") == true))
                 {
-                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
                     _modelWorksheet.BrandCol = col;
                     continue;
                 }
                 if (_modelWorksheet.ItemCol == 0
                     && (worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("ITEM") == true
+                    .ToUpperInvariant().Contains("ITEM") == true
                     || worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("LOTE") == true))
+                    .ToUpperInvariant().Contains("LOTE") == true))
                 {
-                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
                     _modelWorksheet.ItemCol = col;
                     continue;
                 }
-                if (_modelWorksheet.ModelCol == 0
-                    && worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("MODELO") == true)
+                if (_modelWorksheet.ModelCol == 0 && worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant().Contains("MODELO") == true)
                 {
-                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
                     _modelWorksheet.ModelCol = col;
                     continue;
                 }
                 if (_modelWorksheet.UnitValueCol == 0
                     && (worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("UNITÁRIO") == true
+                    .ToUpperInvariant().Contains("UNITÁRIO") == true
                     || worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("PROP") == true))
+                    .ToUpperInvariant().Contains("PROP") == true))
                 {
-                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
                     _modelWorksheet.UnitValueCol = col;
                     continue;
                 }
-                if (_modelWorksheet.AmountCol == 0
-                    && worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("QUANTIDADE") == true)
+                if (_modelWorksheet.AmountCol == 0 && worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant().Contains("QUANTIDADE") == true)
                 {
-                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
                     _modelWorksheet.AmountCol = col;
                     continue;
                 }
-                if (_modelWorksheet.AnvisaRegCol == 0
-                    && worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("ANVISA") == true)
+                if (_modelWorksheet.AnvisaRegCol == 0 && worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant().Contains("ANVISA") == true)
                 {
-                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
                     _modelWorksheet.AnvisaRegCol = col;
                     continue;
                 }
-                if (_modelWorksheet.DescriptionCol == 0
-                    && (worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("DESCRIÇÃO") == true
-                    || worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("PRODUTO") == true))
+                if (_modelWorksheet.DescriptionCol == 0 && worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant().Contains("DESCRIÇÃO") == true)
                 {
-                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
                     _modelWorksheet.DescriptionCol = col;
                     continue;
                 }
-                if (_modelWorksheet.TotalValueCol == 0
-                    && worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant()
-                    .Contains("TOTAL") == true)
+                if (_modelWorksheet.TotalValueCol == 0 && worksheet.Cells[1, col].Value?.ToString()
+                    .ToUpperInvariant().Contains("TOTAL") == true)
                 {
-                    Console.WriteLine($"Col: {col}, {worksheet.Cells[1, col].Value?.ToString()}");
                     _modelWorksheet.TotalValueCol = col;
                     continue;
                 }
