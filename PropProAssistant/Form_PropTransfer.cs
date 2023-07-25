@@ -141,7 +141,8 @@ namespace PropProAssistant
         {
             if (string.IsNullOrEmpty(_pathPriceBidWorksheet) || string.IsNullOrEmpty(_pathModelWorksheet))
             {
-                MessageBox.Show("Você deve selecionar uma planilha antes", "Erro - Planilha não selecionada",
+                MessageBox.Show("Você deve selecionar uma planilha antes",
+                    "Erro - Planilha não selecionada",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -176,8 +177,6 @@ namespace PropProAssistant
 
                 for (int row = 2; row <= modelWorksheet.Dimension.End.Row; row++)
                 {
-                    if (priceBidRow > _items.Count + 1) break;
-
                     if (int.TryParse(modelWorksheet.Cells[row, _modelWorksheet.ItemCol].Value.ToString(), out var modelItem)
                         && _items.ContainsKey(modelItem))
                     {
@@ -197,6 +196,10 @@ namespace PropProAssistant
                         //    modelWorksheet.Cells[row, _modelWorksheet.AnvisaRegCol].Value = _items[modelItem].AnvisaReg;
                         //}
                         priceBidRow++;
+                    }
+                    else
+                    {
+                        modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = 0;
                     }
                 }
 
