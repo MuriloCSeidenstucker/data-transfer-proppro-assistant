@@ -1,6 +1,7 @@
 ﻿using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
@@ -25,12 +26,18 @@ namespace PropProAssistant
         {
             Btn_PriceBidWorksheetSelector.Text = "Selecionar Planilha Proposta";
             Btn_PriceBidWorksheetSelector.AutoSize = true;
+            Btn_PriceBidWorksheetSelector.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            Btn_PriceBidWorksheetSelector.Location = new Point((int)((ClientSize.Width * 0.5) - (Btn_PriceBidWorksheetSelector.Width * 0.5)), 50);
 
             Btn_ModelWorksheetSelector.Text = "Selecionar Planilha Modelo";
             Btn_ModelWorksheetSelector.AutoSize = true;
+            Btn_ModelWorksheetSelector.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            Btn_ModelWorksheetSelector.Location = new Point((int)((ClientSize.Width * 0.5) - (Btn_ModelWorksheetSelector.Width * 0.5)), 100);
 
             Btn_DataTransfer.Text = "Transferir Dados";
             Btn_DataTransfer.AutoSize = true;
+            Btn_DataTransfer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            Btn_DataTransfer.Location = new Point((int)((ClientSize.Width * 0.5) - (Btn_DataTransfer.Width * 0.5)), 150);
         }
 
         private void InitializeDebug()

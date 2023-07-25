@@ -35,7 +35,7 @@
             // 
             // Btn_ModelWorksheetSelector
             // 
-            this.Btn_ModelWorksheetSelector.Location = new System.Drawing.Point(435, 63);
+            this.Btn_ModelWorksheetSelector.Location = new System.Drawing.Point(0, 29);
             this.Btn_ModelWorksheetSelector.Name = "Btn_ModelWorksheetSelector";
             this.Btn_ModelWorksheetSelector.Size = new System.Drawing.Size(75, 23);
             this.Btn_ModelWorksheetSelector.TabIndex = 1;
@@ -45,7 +45,7 @@
             // 
             // Btn_DataTransfer
             // 
-            this.Btn_DataTransfer.Location = new System.Drawing.Point(267, 246);
+            this.Btn_DataTransfer.Location = new System.Drawing.Point(0, 58);
             this.Btn_DataTransfer.Name = "Btn_DataTransfer";
             this.Btn_DataTransfer.Size = new System.Drawing.Size(75, 23);
             this.Btn_DataTransfer.TabIndex = 2;
@@ -55,7 +55,7 @@
             // 
             // Btn_PriceBidWorksheetSelector
             // 
-            this.Btn_PriceBidWorksheetSelector.Location = new System.Drawing.Point(85, 63);
+            this.Btn_PriceBidWorksheetSelector.Location = new System.Drawing.Point(0, 0);
             this.Btn_PriceBidWorksheetSelector.Name = "Btn_PriceBidWorksheetSelector";
             this.Btn_PriceBidWorksheetSelector.Size = new System.Drawing.Size(75, 23);
             this.Btn_PriceBidWorksheetSelector.TabIndex = 3;
@@ -67,11 +67,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(280, 357);
             this.Controls.Add(this.Btn_PriceBidWorksheetSelector);
             this.Controls.Add(this.Btn_DataTransfer);
             this.Controls.Add(this.Btn_ModelWorksheetSelector);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.MaximizeBox = false;
             this.Name = "Form_PropTransfer";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "PropPro Assistant";
             this.ResumeLayout(false);
 
