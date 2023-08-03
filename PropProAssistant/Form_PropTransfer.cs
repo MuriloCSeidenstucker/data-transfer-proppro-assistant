@@ -49,60 +49,44 @@ namespace PropProAssistant
 
         private void Btn_PriceBidWorksheetSelector_Click(object sender, EventArgs e)
         {
-            using (var fileSelector = new OpenFileDialog())
+            _pathPriceBidWorksheet = SelectWorksheet();
+
+            if (string.IsNullOrEmpty(_pathPriceBidWorksheet)) return;
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var package = new ExcelPackage(new FileInfo(_pathPriceBidWorksheet)))
             {
-                fileSelector.Title = "Selecionar Planilha Proposta";
-                fileSelector.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
-                fileSelector.Multiselect = false;
+                var worksheet = package.Workbook.Worksheets[0];
 
-                if (fileSelector.ShowDialog() == DialogResult.OK)
+                if (!IsPriceBidWorksheetValid(worksheet))
                 {
-                    if (!IsExcelFile(fileSelector.FileName))
+                    MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
+                        "Erro - Planilha inválida",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _pathPriceBidWorksheet = string.Empty;
+                    return;
+                }
+
+                if (_items.Count > 0) _items.Clear();
+
+                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                {
+                    int numberTemp = 0;
+                    decimal unitValueTemp = 0m;
+                    decimal totalValueTemp = 0m;
+                    if (int.TryParse(worksheet.Cells[row, PriceBidWorksheet.ItemCol].Value?.ToString(), out numberTemp) &&
+                        decimal.TryParse(worksheet.Cells[row, PriceBidWorksheet.UnitPriceCol].Value?.ToString(), out unitValueTemp) &&
+                        decimal.TryParse(worksheet.Cells[row, PriceBidWorksheet.TotalPriceCol].Value?.ToString(), out totalValueTemp))
                     {
-                        MessageBox.Show("O arquivo selecionado não é um arquivo Excel válido.",
-                            "Erro - Formato de arquivo inválido", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    _pathPriceBidWorksheet = fileSelector.FileName;
-
-                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                    using (var package = new ExcelPackage(new FileInfo(_pathPriceBidWorksheet)))
-                    {
-                        var worksheet = package.Workbook.Worksheets[0];
-
-                        if (!IsPriceBidWorksheetValid(worksheet))
-                        {
-                            MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
-                                "Erro - Planilha inválida",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            _pathPriceBidWorksheet = string.Empty;
-                            return;
-                        }
-
-                        if (_items.Count > 0) _items.Clear();
-
-                        for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
-                        {
-                            int numberTemp = 0;
-                            decimal unitValueTemp = 0m;
-                            decimal totalValueTemp = 0m;
-                            if (int.TryParse(worksheet.Cells[row, PriceBidWorksheet.ItemCol].Value?.ToString(), out numberTemp) &&
-                                decimal.TryParse(worksheet.Cells[row, PriceBidWorksheet.UnitPriceCol].Value?.ToString(), out unitValueTemp) &&
-                                decimal.TryParse(worksheet.Cells[row, PriceBidWorksheet.TotalPriceCol].Value?.ToString(), out totalValueTemp))
+                        _items.Add(numberTemp,
+                            new Item
                             {
-                                _items.Add(numberTemp,
-                                    new Item
-                                    {
-                                        Number = numberTemp,
-                                        Brand = worksheet.Cells[row, PriceBidWorksheet.BrandCol].Value?.ToString(),
-                                        UnitValue = unitValueTemp,
-                                        Description = worksheet.Cells[row, PriceBidWorksheet.DescriptionCol].Value?.ToString(),
-                                        TotalValue = totalValueTemp
-                                    });
-                            }
-                        }
+                                Number = numberTemp,
+                                Brand = worksheet.Cells[row, PriceBidWorksheet.BrandCol].Value?.ToString(),
+                                UnitValue = unitValueTemp,
+                                Description = worksheet.Cells[row, PriceBidWorksheet.DescriptionCol].Value?.ToString(),
+                                TotalValue = totalValueTemp
+                            });
                     }
                 }
             }
@@ -110,36 +94,20 @@ namespace PropProAssistant
 
         private void Btn_ModelWorksheetSelector_Click(object sender, EventArgs e)
         {
-            using (var fileSelector = new OpenFileDialog())
+            _pathModelWorksheet = SelectWorksheet();
+
+            if (string.IsNullOrEmpty(_pathModelWorksheet)) return;
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var package = new ExcelPackage(new FileInfo(_pathModelWorksheet)))
             {
-                fileSelector.Title = "Selecionar Planilha Modelo";
-                fileSelector.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
-                fileSelector.Multiselect = false;
+                var worksheet = package.Workbook.Worksheets[0];
 
-                if (fileSelector.ShowDialog() == DialogResult.OK)
+                if (!IsModelWorksheetValid(worksheet))
                 {
-                    if (!IsExcelFile(fileSelector.FileName))
-                    {
-                        MessageBox.Show("O arquivo selecionado não é um arquivo Excel válido.",
-                            "Erro - Formato de arquivo inválido",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    _pathModelWorksheet = fileSelector.FileName;
-
-                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                    using (var package = new ExcelPackage(new FileInfo(_pathModelWorksheet)))
-                    {
-                        var worksheet = package.Workbook.Worksheets[0];
-
-                        if (!IsModelWorksheetValid(worksheet))
-                        {
-                            MessageBox.Show("A planilha selecionada não possui a estrutura esperada.", "Erro - Planilha inválida",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            _pathModelWorksheet = string.Empty;
-                        }
-                    }
+                    MessageBox.Show("A planilha selecionada não possui a estrutura esperada.", "Erro - Planilha inválida",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _pathModelWorksheet = string.Empty;
                 }
             }
         }
@@ -254,6 +222,30 @@ namespace PropProAssistant
                 modelPackage.Save();
 
                 MessageBox.Show("Planilha Resetada!");
+            }
+        }
+
+        private string SelectWorksheet()
+        {
+            string selectedFilePath = string.Empty;
+
+            using (var fileSelector = new OpenFileDialog())
+            {
+                fileSelector.Title = "Selecione uma planilha";
+                fileSelector.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+                fileSelector.Multiselect = false;
+
+                if (fileSelector.ShowDialog() == DialogResult.OK)
+                {
+                    if (IsExcelFile(fileSelector.FileName))
+                        selectedFilePath = fileSelector.FileName;
+                    else
+                        MessageBox.Show("O arquivo selecionado não é um arquivo Excel válido.",
+                            "Erro - Formato de arquivo inválido",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                return selectedFilePath;
             }
         }
 
