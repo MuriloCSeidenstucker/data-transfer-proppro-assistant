@@ -56,7 +56,7 @@ namespace PropProAssistant
 
         private void Btn_PriceBidWorksheetSelector_Click(object sender, EventArgs e)
         {
-            _pathPriceBidWorksheet = SelectWorksheet();
+            _pathPriceBidWorksheet = GetWorksheetPath();
 
             if (string.IsNullOrEmpty(_pathPriceBidWorksheet)) return;
 
@@ -101,7 +101,7 @@ namespace PropProAssistant
 
         private void Btn_ModelWorksheetSelector_Click(object sender, EventArgs e)
         {
-            _pathModelWorksheet = SelectWorksheet();
+            _pathModelWorksheet = GetWorksheetPath();
 
             if (string.IsNullOrEmpty(_pathModelWorksheet)) return;
 
@@ -112,7 +112,8 @@ namespace PropProAssistant
 
                 if (!IsModelWorksheetValid(worksheet))
                 {
-                    MessageBox.Show("A planilha selecionada não possui a estrutura esperada.", "Erro - Planilha inválida",
+                    MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
+                        "Erro - Planilha inválida",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     _pathModelWorksheet = string.Empty;
                 }
@@ -232,7 +233,7 @@ namespace PropProAssistant
             }
         }
 
-        private string SelectWorksheet()
+        private string GetWorksheetPath()
         {
             string selectedFilePath = string.Empty;
 
@@ -293,9 +294,9 @@ namespace PropProAssistant
                 }
             }
 
-            if (!IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.ItemCol)
-                || !IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.BrandCol)
-                || !IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.UnitPriceCol))
+            if (!IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.ItemCol) ||
+                !IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.BrandCol) ||
+                !IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.UnitPriceCol))
             {
                 return false;
             }
