@@ -34,10 +34,17 @@ namespace PropProAssistant
             Btn_ModelWorksheetSelector.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             Btn_ModelWorksheetSelector.Location = new Point((int)((ClientSize.Width * 0.5) - (Btn_ModelWorksheetSelector.Width * 0.5)), 100);
 
+            string[] models = new string[] { "Selecione o Portal", "BNC", "Licitanet", "Portal de Compras Públicas" };
+            Cbx_WorksheetModels.Items.AddRange(models);
+            Cbx_WorksheetModels.SelectedIndex = 0;
+            Cbx_WorksheetModels.Size = new Size(160, 21);
+            Cbx_WorksheetModels.Location = new Point((int)((ClientSize.Width * 0.5) - (Cbx_WorksheetModels.Width * 0.5)), 130);
+            Cbx_WorksheetModels.DropDownStyle = ComboBoxStyle.DropDownList;
+
             Btn_DataTransfer.Text = "Transferir Dados";
             Btn_DataTransfer.AutoSize = true;
             Btn_DataTransfer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            Btn_DataTransfer.Location = new Point((int)((ClientSize.Width * 0.5) - (Btn_DataTransfer.Width * 0.5)), 150);
+            Btn_DataTransfer.Location = new Point((int)((ClientSize.Width * 0.5) - (Btn_DataTransfer.Width * 0.5)), 180);
         }
 
         private void InitializeDebug()

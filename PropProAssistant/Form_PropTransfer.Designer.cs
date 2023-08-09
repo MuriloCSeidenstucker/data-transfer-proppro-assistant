@@ -31,6 +31,7 @@
             this.Btn_ModelWorksheetSelector = new System.Windows.Forms.Button();
             this.Btn_DataTransfer = new System.Windows.Forms.Button();
             this.Btn_PriceBidWorksheetSelector = new System.Windows.Forms.Button();
+            this.Cbx_WorksheetModels = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // Btn_ModelWorksheetSelector
@@ -63,11 +64,20 @@
             this.Btn_PriceBidWorksheetSelector.UseVisualStyleBackColor = true;
             this.Btn_PriceBidWorksheetSelector.Click += new System.EventHandler(this.Btn_PriceBidWorksheetSelector_Click);
             // 
+            // Cbx_WorksheetModels
+            // 
+            this.Cbx_WorksheetModels.FormattingEnabled = true;
+            this.Cbx_WorksheetModels.Location = new System.Drawing.Point(0, 87);
+            this.Cbx_WorksheetModels.Name = "Cbx_WorksheetModels";
+            this.Cbx_WorksheetModels.Size = new System.Drawing.Size(121, 21);
+            this.Cbx_WorksheetModels.TabIndex = 4;
+            // 
             // Form_PropTransfer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(280, 357);
+            this.Controls.Add(this.Cbx_WorksheetModels);
             this.Controls.Add(this.Btn_PriceBidWorksheetSelector);
             this.Controls.Add(this.Btn_DataTransfer);
             this.Controls.Add(this.Btn_ModelWorksheetSelector);
@@ -84,5 +94,6 @@
         private System.Windows.Forms.Button Btn_ModelWorksheetSelector;
         private System.Windows.Forms.Button Btn_DataTransfer;
         private System.Windows.Forms.Button Btn_PriceBidWorksheetSelector;
+        private System.Windows.Forms.ComboBox Cbx_WorksheetModels;
     }
 }
