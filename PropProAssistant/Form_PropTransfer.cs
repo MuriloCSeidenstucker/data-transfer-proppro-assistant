@@ -10,7 +10,7 @@ namespace PropProAssistant
     public partial class Form_PropTransfer : Form
     {
         private Dictionary<int, Item> _items = new Dictionary<int, Item>();
-        private ModelWorksheet _modelWorksheet = new ModelWorksheet();
+        //private ModelWorksheet _modelWorksheet = new ModelWorksheet();
         private ModelWorksheetAbs _worksheet;
 
         private string _pathPriceBidWorksheet = string.Empty;
@@ -119,38 +119,11 @@ namespace PropProAssistant
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 _pathModelWorksheet = string.Empty;
             }
-
-            //_pathModelWorksheet = GetWorksheetPath();
-
-            //if (string.IsNullOrEmpty(_pathModelWorksheet)) return;
-
-            //_worksheet = new BncModel(_pathModelWorksheet);
-            //if (!_worksheet.Validate())
-            //{
-            //    MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
-            //        "Erro - Planilha inválida",
-            //        MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    _pathModelWorksheet = string.Empty;
-            //}
-
-            //ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            //using (var package = new ExcelPackage(new FileInfo(_pathModelWorksheet)))
-            //{
-            //    var worksheet = package.Workbook.Worksheets[0];
-
-            //    if (!IsModelWorksheetValid(worksheet))
-            //    {
-            //        MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
-            //            "Erro - Planilha inválida",
-            //            MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //        _pathModelWorksheet = string.Empty;
-            //    }
-            //}
         }
 
         private void Btn_DataTransfer_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(_pathPriceBidWorksheet) || string.IsNullOrEmpty(_pathModelWorksheet))
+            if (string.IsNullOrEmpty(_pathPriceBidWorksheet) || _worksheet == null)
             {
                 MessageBox.Show("Você deve selecionar uma planilha antes",
                     "Erro - Planilha não selecionada",
@@ -160,7 +133,7 @@ namespace PropProAssistant
             
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            using (var modelPackage = new ExcelPackage(new FileInfo(_pathModelWorksheet)))
+            using (var modelPackage = new ExcelPackage(new FileInfo(_worksheet.Path)))
             {
                 var modelWorksheet = modelPackage.Workbook.Worksheets[0];
 
@@ -174,7 +147,7 @@ namespace PropProAssistant
                     if (option == DialogResult.No) return;
                 }
 
-                if (IsSomeColumnCellFilled(modelWorksheet, _modelWorksheet.UnitValueCol))
+                if (IsSomeColumnCellFilled(modelWorksheet, _worksheet.UnitValueCol))
                 {
                     var option = MessageBox.Show("A planilha parece já estar preenchida. Deseja continuar?",
                     "Planilha Preenchida",
@@ -188,20 +161,20 @@ namespace PropProAssistant
 
                 for (int row = 2; row <= modelWorksheet.Dimension.End.Row; row++)
                 {
-                    if (int.TryParse(modelWorksheet.Cells[row, _modelWorksheet.ItemCol].Value.ToString(), out var modelItem)
+                    if (int.TryParse(modelWorksheet.Cells[row, _worksheet.ItemCol].Value.ToString(), out var modelItem)
                         && _items.ContainsKey(modelItem))
                     {
-                        modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = _items[modelItem].UnitValue;
-                        modelWorksheet.Cells[row, _modelWorksheet.BrandCol].Value = _items[modelItem].Brand;
-                        modelWorksheet.Cells[row, _modelWorksheet.ModelCol].Value = _items[modelItem].Brand;
-                        if (_modelWorksheet.DescriptionCol != 0)
-                        {
-                            modelWorksheet.Cells[row, _modelWorksheet.DescriptionCol].Value = _items[modelItem].Description;
-                        }
-                        if (_modelWorksheet.TotalValueCol != 0)
-                        {
-                            modelWorksheet.Cells[row, _modelWorksheet.TotalValueCol].Value = _items[modelItem].TotalValue;
-                        }
+                        modelWorksheet.Cells[row, _worksheet.UnitValueCol].Value = _items[modelItem].UnitValue;
+                        modelWorksheet.Cells[row, _worksheet.BrandCol].Value = _items[modelItem].Brand;
+                        modelWorksheet.Cells[row, _worksheet.ModelCol].Value = _items[modelItem].Brand;
+                        //if (_worksheet.DescriptionCol != 0)
+                        //{
+                        //    modelWorksheet.Cells[row, _modelWorksheet.DescriptionCol].Value = _items[modelItem].Description;
+                        //}
+                        //if (_modelWorksheet.TotalValueCol != 0)
+                        //{
+                        //    modelWorksheet.Cells[row, _modelWorksheet.TotalValueCol].Value = _items[modelItem].TotalValue;
+                        //}
                         //if (_modelWorksheet.AnvisaRegCol != 0)
                         //{
                         //    modelWorksheet.Cells[row, _modelWorksheet.AnvisaRegCol].Value = _items[modelItem].AnvisaReg;
@@ -210,7 +183,7 @@ namespace PropProAssistant
                     }
                     else
                     {
-                        modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = 0;
+                        modelWorksheet.Cells[row, _worksheet.UnitValueCol].Value = 0;
                     }
                 }
 
@@ -222,7 +195,7 @@ namespace PropProAssistant
 
         public void Btn_ResetButton_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(_pathModelWorksheet))
+            if (_worksheet == null)
             {
                 MessageBox.Show("Você deve selecionar uma planilha antes", "Erro - Planilha não selecionada",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -231,28 +204,28 @@ namespace PropProAssistant
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            using (var modelPackage = new ExcelPackage(new FileInfo(_pathModelWorksheet)))
+            using (var modelPackage = new ExcelPackage(new FileInfo(_worksheet.Path)))
             {
                 var modelWorksheet = modelPackage.Workbook.Worksheets[0];
 
                 for (int row = 2; row <= modelWorksheet.Dimension.End.Row; row++)
                 {
-                    modelWorksheet.Cells[row, _modelWorksheet.BrandCol].Value = string.Empty;
-                    modelWorksheet.Cells[row, _modelWorksheet.ModelCol].Value = string.Empty;
-                    modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = string.Empty;
+                    modelWorksheet.Cells[row, _worksheet.BrandCol].Value = string.Empty;
+                    modelWorksheet.Cells[row, _worksheet.ModelCol].Value = string.Empty;
+                    modelWorksheet.Cells[row, _worksheet.UnitValueCol].Value = string.Empty;
 
-                    if (_modelWorksheet.DescriptionCol != 0)
-                    {
-                        modelWorksheet.Cells[row, _modelWorksheet.DescriptionCol].Value = string.Empty;
-                    }
-                    if (_modelWorksheet.TotalValueCol != 0)
-                    {
-                        modelWorksheet.Cells[row, _modelWorksheet.TotalValueCol].Value = string.Empty;
-                    }
-                    if (_modelWorksheet.AnvisaRegCol != 0)
-                    {
-                        modelWorksheet.Cells[row, _modelWorksheet.AnvisaRegCol].Value = string.Empty;
-                    }
+                    //if (_modelWorksheet.DescriptionCol != 0)
+                    //{
+                    //    modelWorksheet.Cells[row, _modelWorksheet.DescriptionCol].Value = string.Empty;
+                    //}
+                    //if (_modelWorksheet.TotalValueCol != 0)
+                    //{
+                    //    modelWorksheet.Cells[row, _modelWorksheet.TotalValueCol].Value = string.Empty;
+                    //}
+                    //if (_modelWorksheet.AnvisaRegCol != 0)
+                    //{
+                    //    modelWorksheet.Cells[row, _modelWorksheet.AnvisaRegCol].Value = string.Empty;
+                    //}
                 }
 
                 modelPackage.Save();
@@ -353,98 +326,98 @@ namespace PropProAssistant
             return true;
         }
 
-        private bool IsModelWorksheetValid(ExcelWorksheet worksheet)
-        {
-            if (worksheet.Dimension?.Rows < 2) return false;
+        //private bool IsModelWorksheetValid(ExcelWorksheet worksheet)
+        //{
+        //    if (worksheet.Dimension?.Rows < 2) return false;
 
-            for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
-            {
-                if (_modelWorksheet.BrandCol == 0
-                    && (worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant().Contains("MARCA") == true
-                    || worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant().Contains("FABRICANTE") == true))
-                {
-                    _modelWorksheet.BrandCol = col;
-                    continue;
-                }
-                if (_modelWorksheet.ItemCol == 0
-                    && (worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant().Contains("ITEM") == true
-                    || worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant().Contains("LOTE") == true))
-                {
-                    _modelWorksheet.ItemCol = col;
-                    continue;
-                }
-                if (_modelWorksheet.ModelCol == 0 && worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant().Contains("MODELO") == true)
-                {
-                    _modelWorksheet.ModelCol = col;
-                    continue;
-                }
-                if (_modelWorksheet.UnitValueCol == 0
-                    && (worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant().Contains("UNITÁRIO") == true
-                    || worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant().Contains("PROP") == true))
-                {
-                    _modelWorksheet.UnitValueCol = col;
-                    continue;
-                }
-                if (_modelWorksheet.AmountCol == 0 && worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant().Contains("QUANTIDADE") == true)
-                {
-                    _modelWorksheet.AmountCol = col;
-                    continue;
-                }
-                if (_modelWorksheet.AnvisaRegCol == 0 && worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant().Contains("ANVISA") == true)
-                {
-                    _modelWorksheet.AnvisaRegCol = col;
-                    continue;
-                }
-                if (_modelWorksheet.DescriptionCol == 0 && worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant().Contains("DESCRIÇÃO") == true)
-                {
-                    _modelWorksheet.DescriptionCol = col;
-                    continue;
-                }
-                if (_modelWorksheet.TotalValueCol == 0 && worksheet.Cells[1, col].Value?.ToString()
-                    .ToUpperInvariant().Contains("TOTAL") == true)
-                {
-                    _modelWorksheet.TotalValueCol = col;
-                    continue;
-                }
-            }
+        //    for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+        //    {
+        //        if (_modelWorksheet.BrandCol == 0
+        //            && (worksheet.Cells[1, col].Value?.ToString()
+        //            .ToUpperInvariant().Contains("MARCA") == true
+        //            || worksheet.Cells[1, col].Value?.ToString()
+        //            .ToUpperInvariant().Contains("FABRICANTE") == true))
+        //        {
+        //            _modelWorksheet.BrandCol = col;
+        //            continue;
+        //        }
+        //        if (_modelWorksheet.ItemCol == 0
+        //            && (worksheet.Cells[1, col].Value?.ToString()
+        //            .ToUpperInvariant().Contains("ITEM") == true
+        //            || worksheet.Cells[1, col].Value?.ToString()
+        //            .ToUpperInvariant().Contains("LOTE") == true))
+        //        {
+        //            _modelWorksheet.ItemCol = col;
+        //            continue;
+        //        }
+        //        if (_modelWorksheet.ModelCol == 0 && worksheet.Cells[1, col].Value?.ToString()
+        //            .ToUpperInvariant().Contains("MODELO") == true)
+        //        {
+        //            _modelWorksheet.ModelCol = col;
+        //            continue;
+        //        }
+        //        if (_modelWorksheet.UnitValueCol == 0
+        //            && (worksheet.Cells[1, col].Value?.ToString()
+        //            .ToUpperInvariant().Contains("UNITÁRIO") == true
+        //            || worksheet.Cells[1, col].Value?.ToString()
+        //            .ToUpperInvariant().Contains("PROP") == true))
+        //        {
+        //            _modelWorksheet.UnitValueCol = col;
+        //            continue;
+        //        }
+        //        if (_modelWorksheet.AmountCol == 0 && worksheet.Cells[1, col].Value?.ToString()
+        //            .ToUpperInvariant().Contains("QUANTIDADE") == true)
+        //        {
+        //            _modelWorksheet.AmountCol = col;
+        //            continue;
+        //        }
+        //        if (_modelWorksheet.AnvisaRegCol == 0 && worksheet.Cells[1, col].Value?.ToString()
+        //            .ToUpperInvariant().Contains("ANVISA") == true)
+        //        {
+        //            _modelWorksheet.AnvisaRegCol = col;
+        //            continue;
+        //        }
+        //        if (_modelWorksheet.DescriptionCol == 0 && worksheet.Cells[1, col].Value?.ToString()
+        //            .ToUpperInvariant().Contains("DESCRIÇÃO") == true)
+        //        {
+        //            _modelWorksheet.DescriptionCol = col;
+        //            continue;
+        //        }
+        //        if (_modelWorksheet.TotalValueCol == 0 && worksheet.Cells[1, col].Value?.ToString()
+        //            .ToUpperInvariant().Contains("TOTAL") == true)
+        //        {
+        //            _modelWorksheet.TotalValueCol = col;
+        //            continue;
+        //        }
+        //    }
 
-            if (_modelWorksheet.ItemCol == 0
-                || _modelWorksheet.BrandCol == 0
-                || _modelWorksheet.ModelCol == 0
-                || _modelWorksheet.UnitValueCol == 0)
-            {
-                return false;
-            }
+        //    if (_modelWorksheet.ItemCol == 0
+        //        || _modelWorksheet.BrandCol == 0
+        //        || _modelWorksheet.ModelCol == 0
+        //        || _modelWorksheet.UnitValueCol == 0)
+        //    {
+        //        return false;
+        //    }
 
-            if (IsSomeColumnCellFilled(worksheet, _modelWorksheet.UnitValueCol))
-            {
-                var option = MessageBox.Show("A planilha parece já estar preenchida. Deseja continuar?",
-                    "Planilha Preenchida",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+        //    if (IsSomeColumnCellFilled(worksheet, _modelWorksheet.UnitValueCol))
+        //    {
+        //        var option = MessageBox.Show("A planilha parece já estar preenchida. Deseja continuar?",
+        //            "Planilha Preenchida",
+        //            MessageBoxButtons.YesNo,
+        //            MessageBoxIcon.Question);
 
-                if (option == DialogResult.No)
-                {
-                    return false;
-                }
-            }
+        //        if (option == DialogResult.No)
+        //        {
+        //            return false;
+        //        }
+        //    }
 
-            if (!IsSomeColumnCellFilled(worksheet, _modelWorksheet.ItemCol))
-            {
-                return false;
-            }
+        //    if (!IsSomeColumnCellFilled(worksheet, _modelWorksheet.ItemCol))
+        //    {
+        //        return false;
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
     }
 }
