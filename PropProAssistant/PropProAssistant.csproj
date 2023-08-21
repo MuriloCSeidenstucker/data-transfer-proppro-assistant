@@ -70,7 +70,9 @@
     <Compile Include="Form_PropTransfer.Designer.cs">
       <DependentUpon>Form_PropTransfer.cs</DependentUpon>
     </Compile>
-    <Compile Include="IWorksheet.cs" />
+    <Compile Include="LicitanetModel.cs" />
+    <Compile Include="ModelWorksheetAbs.cs" />
+    <Compile Include="PcpModel.cs" />
     <Compile Include="PriceBidWorksheet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

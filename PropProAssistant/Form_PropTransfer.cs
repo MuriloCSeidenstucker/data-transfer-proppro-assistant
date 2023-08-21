@@ -11,6 +11,7 @@ namespace PropProAssistant
     {
         private Dictionary<int, Item> _items = new Dictionary<int, Item>();
         private ModelWorksheet _modelWorksheet = new ModelWorksheet();
+        private ModelWorksheetAbs _worksheet;
 
         private string _pathPriceBidWorksheet = string.Empty;
         private string _pathModelWorksheet = string.Empty;
@@ -101,23 +102,50 @@ namespace PropProAssistant
 
         private void Btn_ModelWorksheetSelector_Click(object sender, EventArgs e)
         {
-            _pathModelWorksheet = GetWorksheetPath();
+            string path = GetWorksheetPath();
+            if (string.IsNullOrEmpty(path)) return;
 
-            if (string.IsNullOrEmpty(_pathModelWorksheet)) return;
+            int portal = Cbx_WorksheetModels.SelectedIndex;
 
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            using (var package = new ExcelPackage(new FileInfo(_pathModelWorksheet)))
+            SelectPortal(path, portal);
+
+            if (_worksheet == null) return;
+
+            bool validWorksheet = _worksheet.Validate();
+            if (!validWorksheet)
             {
-                var worksheet = package.Workbook.Worksheets[0];
-
-                if (!IsModelWorksheetValid(worksheet))
-                {
-                    MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
-                        "Erro - Planilha inválida",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    _pathModelWorksheet = string.Empty;
-                }
+                MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
+                    "Erro - Planilha inválida",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _pathModelWorksheet = string.Empty;
             }
+
+            //_pathModelWorksheet = GetWorksheetPath();
+
+            //if (string.IsNullOrEmpty(_pathModelWorksheet)) return;
+
+            //_worksheet = new BncModel(_pathModelWorksheet);
+            //if (!_worksheet.Validate())
+            //{
+            //    MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
+            //        "Erro - Planilha inválida",
+            //        MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    _pathModelWorksheet = string.Empty;
+            //}
+
+            //ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            //using (var package = new ExcelPackage(new FileInfo(_pathModelWorksheet)))
+            //{
+            //    var worksheet = package.Workbook.Worksheets[0];
+
+            //    if (!IsModelWorksheetValid(worksheet))
+            //    {
+            //        MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
+            //            "Erro - Planilha inválida",
+            //            MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //        _pathModelWorksheet = string.Empty;
+            //    }
+            //}
         }
 
         private void Btn_DataTransfer_Click(object sender, EventArgs e)
@@ -278,6 +306,27 @@ namespace PropProAssistant
             }
 
             return false;
+        }
+
+        private void SelectPortal(string path, int portal)
+        {
+            switch (portal)
+            {
+                case 0:
+                    MessageBox.Show("Selecione um Portal");
+                    break;
+                case 1:
+                    _worksheet = new BncModel(path);
+                    break;
+                case 2:
+                    _worksheet = new LicitanetModel(path);
+                    break;
+                case 3:
+                    _worksheet = new PcpModel(path);
+                    break;
+                default:
+                    throw new NotImplementedException($"Situação não esperada. Portal escolhido: {portal}");
+            }
         }
 
         private bool IsPriceBidWorksheetValid(ExcelWorksheet worksheet)

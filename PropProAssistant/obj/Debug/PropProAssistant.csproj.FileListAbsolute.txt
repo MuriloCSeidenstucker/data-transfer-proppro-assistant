@@ -38,7 +38,6 @@ D:\DotNETProjects\proppro-assistant\PropProAssistant\bin\Debug\Microsoft.IO.Recy
 D:\DotNETProjects\proppro-assistant\PropProAssistant\bin\Debug\EPPlus.xml
 D:\DotNETProjects\proppro-assistant\PropProAssistant\bin\Debug\Microsoft.IO.RecyclableMemoryStream.xml
 D:\DotNETProjects\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.AssemblyReference.cache
-D:\DotNETProjects\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.SuggestedBindingRedirects.cache
 D:\DotNETProjects\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.ResolveComReference.cache
 D:\DotNETProjects\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.Form_PropTransfer.resources
 D:\DotNETProjects\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.Properties.Resources.resources
