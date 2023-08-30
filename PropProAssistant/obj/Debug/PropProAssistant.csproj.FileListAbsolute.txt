@@ -13,7 +13,6 @@ C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bi
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Debug\PropProAssistant.exe
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Debug\PropProAssistant.pdb
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.AssemblyReference.cache
-C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.SuggestedBindingRedirects.cache
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.ResolveComReference.cache
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.Properties.Resources.resources
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.GenerateResource.cache

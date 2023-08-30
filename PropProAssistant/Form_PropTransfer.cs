@@ -9,12 +9,13 @@ namespace PropProAssistant
 {
     public partial class Form_PropTransfer : Form
     {
-        private Dictionary<int, Item> _items = new Dictionary<int, Item>();
+        //private Dictionary<int, Item> _items = new Dictionary<int, Item>();
         //private ModelWorksheet _modelWorksheet = new ModelWorksheet();
-        private ModelWorksheetAbs _worksheet;
+        private PriceBidWorksheet _priceBidWorksheet;
+        private ModelWorksheetAbs _modelWorksheet;
 
-        private string _pathPriceBidWorksheet = string.Empty;
-        private string _pathModelWorksheet = string.Empty;
+        //private string _pathPriceBidWorksheet = string.Empty;
+        //private string _pathModelWorksheet = string.Empty;
 
         public Form_PropTransfer()
         {
@@ -57,46 +58,18 @@ namespace PropProAssistant
 
         private void Btn_PriceBidWorksheetSelector_Click(object sender, EventArgs e)
         {
-            _pathPriceBidWorksheet = GetWorksheetPath();
+            string path = GetWorksheetPath();
+            if (string.IsNullOrEmpty(path)) return;
 
-            if (string.IsNullOrEmpty(_pathPriceBidWorksheet)) return;
+            _priceBidWorksheet = new PriceBidWorksheet(path);
+            if (_priceBidWorksheet == null) return;
 
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            using (var package = new ExcelPackage(new FileInfo(_pathPriceBidWorksheet)))
+            bool validWorksheet = _priceBidWorksheet.Validate();
+            if (!validWorksheet)
             {
-                var worksheet = package.Workbook.Worksheets[0];
-
-                if (!IsPriceBidWorksheetValid(worksheet))
-                {
-                    MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
-                        "Erro - Planilha inválida",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    _pathPriceBidWorksheet = string.Empty;
-                    return;
-                }
-
-                if (_items.Count > 0) _items.Clear();
-
-                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
-                {
-                    int numberTemp = 0;
-                    decimal unitValueTemp = 0m;
-                    decimal totalValueTemp = 0m;
-                    if (int.TryParse(worksheet.Cells[row, PriceBidWorksheet.ItemCol].Value?.ToString(), out numberTemp) &&
-                        decimal.TryParse(worksheet.Cells[row, PriceBidWorksheet.UnitPriceCol].Value?.ToString(), out unitValueTemp) &&
-                        decimal.TryParse(worksheet.Cells[row, PriceBidWorksheet.TotalPriceCol].Value?.ToString(), out totalValueTemp))
-                    {
-                        _items.Add(numberTemp,
-                            new Item
-                            {
-                                Number = numberTemp,
-                                Brand = worksheet.Cells[row, PriceBidWorksheet.BrandCol].Value?.ToString(),
-                                UnitValue = unitValueTemp,
-                                Description = worksheet.Cells[row, PriceBidWorksheet.DescriptionCol].Value?.ToString(),
-                                TotalValue = totalValueTemp
-                            });
-                    }
-                }
+                MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
+                    "Erro - Planilha inválida",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -106,24 +79,21 @@ namespace PropProAssistant
             if (string.IsNullOrEmpty(path)) return;
 
             int portal = Cbx_WorksheetModels.SelectedIndex;
+            _modelWorksheet = GetModelWorksheet(path, portal);
+            if (_modelWorksheet == null) return;
 
-            SelectPortal(path, portal);
-
-            if (_worksheet == null) return;
-
-            bool validWorksheet = _worksheet.Validate();
+            bool validWorksheet = _modelWorksheet.Validate();
             if (!validWorksheet)
             {
                 MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
                     "Erro - Planilha inválida",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _pathModelWorksheet = string.Empty;
             }
         }
 
         private void Btn_DataTransfer_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(_pathPriceBidWorksheet) || _worksheet == null)
+            if (_priceBidWorksheet == null || _modelWorksheet == null)
             {
                 MessageBox.Show("Você deve selecionar uma planilha antes",
                     "Erro - Planilha não selecionada",
@@ -133,11 +103,13 @@ namespace PropProAssistant
             
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            using (var modelPackage = new ExcelPackage(new FileInfo(_worksheet.Path)))
+            using (var priceBidPackage = new ExcelPackage(new FileInfo(_priceBidWorksheet.Path)))
+            using (var modelPackage = new ExcelPackage(new FileInfo(_modelWorksheet.Path)))
             {
+                var priceBidWorksheet = priceBidPackage.Workbook.Worksheets[0];
                 var modelWorksheet = modelPackage.Workbook.Worksheets[0];
 
-                if (_items.Count > modelWorksheet.Dimension.End.Row - 1)
+                if (priceBidWorksheet.Dimension.End.Row > modelWorksheet.Dimension.End.Row - 1)
                 {
                     var option = MessageBox.Show("A quantidade de itens da proposta é maior do que da planilha modelo. Deseja continuar?",
                     "Planilha Errada",
@@ -147,7 +119,7 @@ namespace PropProAssistant
                     if (option == DialogResult.No) return;
                 }
 
-                if (IsSomeColumnCellFilled(modelWorksheet, _worksheet.UnitValueCol))
+                if (IsSomeColumnCellFilled(modelWorksheet, _modelWorksheet.UnitValueCol))
                 {
                     var option = MessageBox.Show("A planilha parece já estar preenchida. Deseja continuar?",
                     "Planilha Preenchida",
@@ -161,12 +133,19 @@ namespace PropProAssistant
 
                 for (int row = 2; row <= modelWorksheet.Dimension.End.Row; row++)
                 {
-                    if (int.TryParse(modelWorksheet.Cells[row, _worksheet.ItemCol].Value.ToString(), out var modelItem)
-                        && _items.ContainsKey(modelItem))
+                    if (priceBidRow > priceBidWorksheet.Dimension.End.Row)
                     {
-                        modelWorksheet.Cells[row, _worksheet.UnitValueCol].Value = _items[modelItem].UnitValue;
-                        modelWorksheet.Cells[row, _worksheet.BrandCol].Value = _items[modelItem].Brand;
-                        modelWorksheet.Cells[row, _worksheet.ModelCol].Value = _items[modelItem].Brand;
+                        modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = 0;
+                        continue;
+                    }
+
+                    if (int.TryParse(modelWorksheet.Cells[row, _modelWorksheet.ItemCol].Value.ToString(), out var modelItem) &&
+                        int.TryParse(priceBidWorksheet.Cells[priceBidRow, _priceBidWorksheet.ItemCol].Value.ToString(), out var priceBidItem) &&
+                        modelItem == priceBidItem)
+                    {
+                        modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = priceBidWorksheet.Cells[priceBidRow, _priceBidWorksheet.UnitPriceCol].Value;
+                        modelWorksheet.Cells[row, _modelWorksheet.BrandCol].Value = priceBidWorksheet.Cells[priceBidRow, _priceBidWorksheet.BrandCol].Value;
+                        modelWorksheet.Cells[row, _modelWorksheet.ModelCol].Value = priceBidWorksheet.Cells[priceBidRow, _priceBidWorksheet.BrandCol].Value;
                         //if (_worksheet.DescriptionCol != 0)
                         //{
                         //    modelWorksheet.Cells[row, _modelWorksheet.DescriptionCol].Value = _items[modelItem].Description;
@@ -183,7 +162,7 @@ namespace PropProAssistant
                     }
                     else
                     {
-                        modelWorksheet.Cells[row, _worksheet.UnitValueCol].Value = 0;
+                        modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = 0;
                     }
                 }
 
@@ -195,7 +174,7 @@ namespace PropProAssistant
 
         public void Btn_ResetButton_Click(object sender, EventArgs e)
         {
-            if (_worksheet == null)
+            if (_modelWorksheet == null)
             {
                 MessageBox.Show("Você deve selecionar uma planilha antes", "Erro - Planilha não selecionada",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -204,15 +183,15 @@ namespace PropProAssistant
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            using (var modelPackage = new ExcelPackage(new FileInfo(_worksheet.Path)))
+            using (var modelPackage = new ExcelPackage(new FileInfo(_modelWorksheet.Path)))
             {
                 var modelWorksheet = modelPackage.Workbook.Worksheets[0];
 
                 for (int row = 2; row <= modelWorksheet.Dimension.End.Row; row++)
                 {
-                    modelWorksheet.Cells[row, _worksheet.BrandCol].Value = string.Empty;
-                    modelWorksheet.Cells[row, _worksheet.ModelCol].Value = string.Empty;
-                    modelWorksheet.Cells[row, _worksheet.UnitValueCol].Value = string.Empty;
+                    modelWorksheet.Cells[row, _modelWorksheet.BrandCol].Value = string.Empty;
+                    modelWorksheet.Cells[row, _modelWorksheet.ModelCol].Value = string.Empty;
+                    modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = string.Empty;
 
                     //if (_modelWorksheet.DescriptionCol != 0)
                     //{
@@ -281,50 +260,47 @@ namespace PropProAssistant
             return false;
         }
 
-        private void SelectPortal(string path, int portal)
+        private ModelWorksheetAbs GetModelWorksheet(string path, int portal)
         {
             switch (portal)
             {
                 case 0:
                     MessageBox.Show("Selecione um Portal");
-                    break;
+                    return null;
                 case 1:
-                    _worksheet = new BncModel(path);
-                    break;
+                    return new BncModel(path);
                 case 2:
-                    _worksheet = new LicitanetModel(path);
-                    break;
+                    return new LicitanetModel(path);
                 case 3:
-                    _worksheet = new PcpModel(path);
-                    break;
+                    return new PcpModel(path);
                 default:
                     throw new NotImplementedException($"Situação não esperada. Portal escolhido: {portal}");
             }
         }
 
-        private bool IsPriceBidWorksheetValid(ExcelWorksheet worksheet)
-        {
-            if (worksheet.Dimension?.Rows < 2) return false;
+        //private bool IsPriceBidWorksheetValid(ExcelWorksheet worksheet)
+        //{
+        //    if (worksheet.Dimension?.Rows < 2) return false;
 
-            for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
-            {
-                if (worksheet.Cells[1, col].Value?.ToString().ToUpperInvariant()
-                    .Equals(PriceBidWorksheet.Structure[0, col - 1],
-                    StringComparison.OrdinalIgnoreCase) == false)
-                {
-                    return false;
-                }
-            }
+        //    for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+        //    {
+        //        if (worksheet.Cells[1, col].Value?.ToString().ToUpperInvariant()
+        //            .Equals(PriceBidWorksheet.Structure[0, col - 1],
+        //            StringComparison.OrdinalIgnoreCase) == false)
+        //        {
+        //            return false;
+        //        }
+        //    }
 
-            if (!IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.ItemCol) ||
-                !IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.BrandCol) ||
-                !IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.UnitPriceCol))
-            {
-                return false;
-            }
+        //    if (!IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.ItemCol) ||
+        //        !IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.BrandCol) ||
+        //        !IsSomeColumnCellFilled(worksheet, PriceBidWorksheet.UnitPriceCol))
+        //    {
+        //        return false;
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
 
         //private bool IsModelWorksheetValid(ExcelWorksheet worksheet)
         //{
