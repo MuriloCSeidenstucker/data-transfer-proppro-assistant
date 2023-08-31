@@ -96,7 +96,6 @@
     <None Include="Models\BNC\BNC_01.xlsx" />
     <None Include="Models\BNC\BNC_04.xlsx" />
     <None Include="Models\LicitaNet\LN_03 .xlsx" />
-    <None Include="Models\PortalCompPubl\PCP_01.xlsx" />
     <None Include="Models\PortalCompPubl\PCP_02 - Cópia .xlsx" />
     <None Include="Models\PortalCompPubl\PCP_02.xlsx" />
     <None Include="packages.config" />

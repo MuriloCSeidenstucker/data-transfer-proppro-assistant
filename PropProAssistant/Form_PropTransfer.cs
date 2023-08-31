@@ -1,6 +1,5 @@
 ﻿using OfficeOpenXml;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -102,13 +101,11 @@ namespace PropProAssistant
             
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            using (var priceBidPackage = new ExcelPackage(new FileInfo(_priceBidWorksheet.Path)))
             using (var modelPackage = new ExcelPackage(new FileInfo(_modelWorksheet.Path)))
             {
-                var priceBidWorksheet = priceBidPackage.Workbook.Worksheets[0];
                 var modelWorksheet = modelPackage.Workbook.Worksheets[0];
 
-                if (priceBidWorksheet.Dimension.End.Row > modelWorksheet.Dimension.End.Row - 1)
+                if (_priceBidWorksheet.Items.Count > modelWorksheet.Dimension.End.Row - 1)
                 {
                     var option = MessageBox.Show("A quantidade de itens da proposta é maior do que da planilha modelo. Deseja continuar?",
                     "Planilha Errada",
@@ -128,41 +125,16 @@ namespace PropProAssistant
                     if (option == DialogResult.No) return;
                 }
 
-                int priceBidRow = 2;
-
                 for (int row = 2; row <= modelWorksheet.Dimension.End.Row; row++)
                 {
-                    if (priceBidRow > priceBidWorksheet.Dimension.End.Row)
-                    {
-                        modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = 0;
-                        continue;
-                    }
+                    modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = 0;
+                }
 
-                    if (int.TryParse(modelWorksheet.Cells[row, _modelWorksheet.ItemCol].Value.ToString(), out var modelItem) &&
-                        int.TryParse(priceBidWorksheet.Cells[priceBidRow, _priceBidWorksheet.ItemCol].Value.ToString(), out var priceBidItem) &&
-                        modelItem == priceBidItem)
-                    {
-                        modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = priceBidWorksheet.Cells[priceBidRow, _priceBidWorksheet.UnitPriceCol].Value;
-                        modelWorksheet.Cells[row, _modelWorksheet.BrandCol].Value = priceBidWorksheet.Cells[priceBidRow, _priceBidWorksheet.BrandCol].Value;
-                        modelWorksheet.Cells[row, _modelWorksheet.ModelCol].Value = priceBidWorksheet.Cells[priceBidRow, _priceBidWorksheet.BrandCol].Value;
-                        //if (_worksheet.DescriptionCol != 0)
-                        //{
-                        //    modelWorksheet.Cells[row, _modelWorksheet.DescriptionCol].Value = _items[modelItem].Description;
-                        //}
-                        //if (_modelWorksheet.TotalValueCol != 0)
-                        //{
-                        //    modelWorksheet.Cells[row, _modelWorksheet.TotalValueCol].Value = _items[modelItem].TotalValue;
-                        //}
-                        //if (_modelWorksheet.AnvisaRegCol != 0)
-                        //{
-                        //    modelWorksheet.Cells[row, _modelWorksheet.AnvisaRegCol].Value = _items[modelItem].AnvisaReg;
-                        //}
-                        priceBidRow++;
-                    }
-                    else
-                    {
-                        modelWorksheet.Cells[row, _modelWorksheet.UnitValueCol].Value = 0;
-                    }
+                foreach (var item in _priceBidWorksheet.Items)
+                {
+                    modelWorksheet.Cells[item.Key + 1, _modelWorksheet.UnitValueCol].Value = item.Value.UnitPrice;
+                    modelWorksheet.Cells[item.Key + 1, _modelWorksheet.BrandCol].Value = item.Value.Brand;
+                    modelWorksheet.Cells[item.Key + 1, _modelWorksheet.ModelCol].Value = item.Value.Brand;
                 }
 
                 modelPackage.Save();
