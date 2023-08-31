@@ -1,6 +1,6 @@
 ﻿namespace PropProAssistant
 {
-    public class LicitanetModel : ModelWorksheetAbs
+    public class LicitanetModel : ModelWorksheet
     {
         public int ItemCodeCol { get; }
         public int DescriptionCol { get; }

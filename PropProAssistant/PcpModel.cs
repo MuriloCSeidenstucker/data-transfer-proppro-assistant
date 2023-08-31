@@ -1,6 +1,6 @@
 ﻿namespace PropProAssistant
 {
-    public class PcpModel : ModelWorksheetAbs
+    public class PcpModel : ModelWorksheet
     {
         public int ProcessNumberCol { get; }
         public int IDCol { get; }

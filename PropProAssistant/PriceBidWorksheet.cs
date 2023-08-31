@@ -1,12 +1,13 @@
 ﻿using OfficeOpenXml;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 
 namespace PropProAssistant
 {
     public class PriceBidWorksheet
     {
+        public Dictionary<int, Item> Items { get; private set; }
         public string[,] Structure { get; }
         public string Path { get; }
         public int ItemCol { get; }
@@ -42,6 +43,8 @@ namespace PropProAssistant
             PositionCol = 13;
             TotalBidCol = 14;
 
+            Items = new Dictionary<int, Item>();
+
             Structure = new string[1, 14]
 {
                 { "ITEM", "DESCRIÇÃO", "UND", "QTD", "MARCA", "VALOR DE CUSTO", "PERCENTUAL DE ENTRADA",
@@ -71,26 +74,47 @@ namespace PropProAssistant
                     }
                 }
 
-                if (!IsSomeColumnCellFilled(worksheet, ItemCol)) return false;
-                if (!IsSomeColumnCellFilled(worksheet, BrandCol)) return false;
-                if (!IsSomeColumnCellFilled(worksheet, UnitPriceCol)) return false;
+                if (!WorksheetService.IsSomeColumnCellFilled(worksheet, UnitCol)) return false;
+                if (!WorksheetService.IsSomeColumnCellFilled(worksheet, ItemCol)) return false;
+                if (!WorksheetService.IsSomeColumnCellFilled(worksheet, BrandCol)) return false;
+                if (!WorksheetService.IsSomeColumnCellFilled(worksheet, AmountCol)) return false;
+                if (!WorksheetService.IsSomeColumnCellFilled(worksheet, UnitPriceCol)) return false;
+                if (!WorksheetService.IsSomeColumnCellFilled(worksheet, TotalPriceCol)) return false;
+                if (!WorksheetService.IsSomeColumnCellFilled(worksheet, DescriptionCol)) return false;
             }
             return true;
         }
 
-        private bool IsSomeColumnCellFilled(ExcelWorksheet worksheet, int column)
+        public void FillDictionary()
         {
-            int lastRow = worksheet.Dimension?.End.Row ?? 0;
-
-            for (int row = 2; row <= lastRow; row++)
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var package = new ExcelPackage(new FileInfo(Path)))
             {
-                if (!string.IsNullOrEmpty(worksheet.Cells[row, column].Value?.ToString()))
+                var worksheet = package.Workbook.Worksheets[0];
+
+                if (Items.Count > 0) Items.Clear();
+
+                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                 {
-                    return true;
+                    if (int.TryParse(worksheet.Cells[row, ItemCol].Value?.ToString(), out int itemNum) &&
+                        int.TryParse(worksheet.Cells[row, AmountCol].Value?.ToString(), out int amount) &&
+                        decimal.TryParse(worksheet.Cells[row, UnitPriceCol].Value?.ToString(), out decimal unitPrice) &&
+                        decimal.TryParse(worksheet.Cells[row, TotalPriceCol].Value?.ToString(), out decimal totalPrice))
+                    {
+                        Items.Add(itemNum,
+                            new Item
+                            {
+                                Unit = worksheet.Cells[row, UnitCol].Value?.ToString(),
+                                Number = itemNum,
+                                Brand = worksheet.Cells[row, BrandCol].Value?.ToString(),
+                                Amount = amount,
+                                UnitPrice = unitPrice,
+                                TotalPrice = totalPrice,
+                                Description = worksheet.Cells[row, DescriptionCol].Value?.ToString()
+                            });
+                    }
                 }
             }
-
-            return false;
         }
     }
 }

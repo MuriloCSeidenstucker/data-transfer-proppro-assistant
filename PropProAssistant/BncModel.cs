@@ -1,6 +1,6 @@
 ﻿namespace PropProAssistant
 {
-    public class BncModel : ModelWorksheetAbs
+    public class BncModel : ModelWorksheet
     {
         public int BatchCol { get; }
 
