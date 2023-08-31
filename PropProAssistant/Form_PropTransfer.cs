@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace PropProAssistant
@@ -61,6 +62,7 @@ namespace PropProAssistant
             bool validWorksheet = _priceBidWorksheet.Validate();
             if (!validWorksheet)
             {
+                _priceBidWorksheet = null;
                 MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
                     "Erro - Planilha inválida",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -83,6 +85,7 @@ namespace PropProAssistant
             bool validWorksheet = _modelWorksheet.Validate();
             if (!validWorksheet)
             {
+                _modelWorksheet = null;
                 MessageBox.Show("A planilha selecionada não possui a estrutura esperada.",
                     "Erro - Planilha inválida",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -105,24 +108,12 @@ namespace PropProAssistant
             {
                 var modelWorksheet = modelPackage.Workbook.Worksheets[0];
 
-                if (_priceBidWorksheet.Items.Count > modelWorksheet.Dimension.End.Row - 1)
+                if (_priceBidWorksheet.Items.Keys.LastOrDefault() > modelWorksheet.Dimension.End.Row - 1)
                 {
-                    var option = MessageBox.Show("A quantidade de itens da proposta é maior do que da planilha modelo. Deseja continuar?",
-                    "Planilha Errada",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
-
-                    if (option == DialogResult.No) return;
-                }
-
-                if (WorksheetService.IsSomeColumnCellFilled(modelWorksheet, _modelWorksheet.UnitValueCol))
-                {
-                    var option = MessageBox.Show("A planilha parece já estar preenchida. Deseja continuar?",
-                    "Planilha Preenchida",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                    if (option == DialogResult.No) return;
+                    MessageBox.Show("A quantidade de itens da proposta é maior do que da planilha modelo.",
+                        "Planilha Incorreta",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
 
                 for (int row = 2; row <= modelWorksheet.Dimension.End.Row; row++)
@@ -234,6 +225,5 @@ namespace PropProAssistant
                     throw new NotImplementedException($"Situação não esperada. Portal escolhido: {portal}");
             }
         }
-
     }
 }
