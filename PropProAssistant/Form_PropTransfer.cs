@@ -78,8 +78,8 @@ namespace PropProAssistant
             string path = GetWorksheetPath();
             if (string.IsNullOrEmpty(path)) return;
 
-            int portal = Cbx_WorksheetModels.SelectedIndex;
-            _modelWorksheet = GetModelWorksheet(path, portal);
+            int selectedPortal = Cbx_WorksheetModels.SelectedIndex;
+            _modelWorksheet = GetModelWorksheet(path, selectedPortal);
             if (_modelWorksheet == null) return;
 
             bool validWorksheet = _modelWorksheet.Validate();

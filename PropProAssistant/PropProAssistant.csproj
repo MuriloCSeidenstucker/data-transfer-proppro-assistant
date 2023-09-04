@@ -62,22 +62,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BncModel.cs" />
-    <Compile Include="DebugComponent.cs" />
+    <Compile Include="Components\Utils\DebugComponent.cs" />
+    <Compile Include="Components\Worksheets\BncModel.cs" />
+    <Compile Include="Components\Worksheets\Item.cs" />
+    <Compile Include="Components\Worksheets\LicitanetModel.cs" />
+    <Compile Include="Components\Worksheets\ModelWorksheet.cs" />
+    <Compile Include="Components\Worksheets\PcpModel.cs" />
+    <Compile Include="Components\Worksheets\PriceBidWorksheet.cs" />
+    <Compile Include="Components\Worksheets\WorksheetService.cs" />
     <Compile Include="Form_PropTransfer.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form_PropTransfer.Designer.cs">
       <DependentUpon>Form_PropTransfer.cs</DependentUpon>
     </Compile>
-    <Compile Include="LicitanetModel.cs" />
-    <Compile Include="ModelWorksheet.cs" />
-    <Compile Include="PcpModel.cs" />
-    <Compile Include="PriceBidWorksheet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Item.cs" />
-    <Compile Include="WorksheetService.cs" />
     <EmbeddedResource Include="Form_PropTransfer.resx">
       <DependentUpon>Form_PropTransfer.cs</DependentUpon>
     </EmbeddedResource>
@@ -91,13 +91,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="Models\BNC\BNC_02.xlsx" />
-    <None Include="Models\BNC\BNC_03.xlsx" />
-    <None Include="Models\BNC\BNC_01.xlsx" />
-    <None Include="Models\BNC\BNC_04.xlsx" />
-    <None Include="Models\LicitaNet\LN_03 .xlsx" />
-    <None Include="Models\PortalCompPubl\PCP_02 - Cópia .xlsx" />
-    <None Include="Models\PortalCompPubl\PCP_02.xlsx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -108,9 +101,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Models\LicitaNet\LN_01.xlsx" />
-    <None Include="Models\LicitaNet\LN_02.xlsx" />
-    <None Include="Models\Price_Bid_Model.xlsm" />
+    <None Include="Test\WorksheetModels\BNC\BNC_01.xlsx" />
+    <None Include="Test\WorksheetModels\BNC\BNC_02.xlsx" />
+    <None Include="Test\WorksheetModels\BNC\BNC_03.xlsx" />
+    <None Include="Test\WorksheetModels\BNC\BNC_04.xlsx" />
+    <None Include="Test\WorksheetModels\LicitaNet\LN_01.xlsx" />
+    <None Include="Test\WorksheetModels\LicitaNet\LN_02.xlsx" />
+    <None Include="Test\WorksheetModels\LicitaNet\LN_03.xlsx" />
+    <None Include="Test\WorksheetModels\LicitaNet\LN_04.xlsx" />
+    <None Include="Test\WorksheetModels\PortalCompPubl\PCP_02 - Cópia .xlsx" />
+    <None Include="Test\WorksheetModels\PortalCompPubl\PCP_02.xlsx" />
+    <None Include="Test\WorksheetModels\Price_Bid_Model.xlsm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

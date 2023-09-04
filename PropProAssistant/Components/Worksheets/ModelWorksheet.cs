@@ -14,7 +14,7 @@ namespace PropProAssistant
         public int ModelCol { get; protected set; }
         public int UnitValueCol { get; protected set; }
 
-        public bool Validate()
+        public virtual bool Validate()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using (var package = new ExcelPackage(new FileInfo(Path)))
