@@ -45,3 +45,4 @@ D:\DotNETProjects\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.
 D:\DotNETProjects\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.csproj.CopyComplete
 D:\DotNETProjects\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.exe
 D:\DotNETProjects\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.pdb
+C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Debug\PropProAssistant.Form_WorksheetCreation.resources
