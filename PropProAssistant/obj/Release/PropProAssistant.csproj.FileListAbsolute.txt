@@ -8,7 +8,6 @@ C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bi
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Release\EPPlus.xml
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\bin\Release\Microsoft.IO.RecyclableMemoryStream.xml
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Release\PropProAssistant.csproj.AssemblyReference.cache
-C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Release\PropProAssistant.csproj.SuggestedBindingRedirects.cache
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Release\PropProAssistant.csproj.ResolveComReference.cache
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Release\PropProAssistant.Form_PropTransfer.resources
 C:\Users\dell\OneDrive\Documentos\Projetos\proppro-assistant\PropProAssistant\obj\Release\PropProAssistant.Properties.Resources.resources
