@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -7,6 +8,8 @@ namespace PropProAssistant
 {
     public partial class Form_WorksheetCreation : Form
     {
+        private PriceBidWorksheet _model;
+
         public Form_WorksheetCreation()
         {
             InitializeComponent();
@@ -17,44 +20,52 @@ namespace PropProAssistant
 
         private void Btn_CreateWorksheet_Click(object sender, EventArgs e)
         {
+            GenerateWorksheet();
+        }
+
+        private void GenerateWorksheet()
+        {
             string filePath = @"../../Test/WorksheetModels/Price_Bid_Worksheet.xlsx";
-            PriceBidWorksheet test = new PriceBidWorksheet(filePath);
+            _model = new PriceBidWorksheet(filePath);
+
+            var fi = new FileInfo(filePath);
+            if (fi.Exists) fi.Delete();
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            if (File.Exists(filePath))
+            using (var package = new ExcelPackage())
             {
-                using (var package = new ExcelPackage(new FileInfo(filePath)))
-                {
-                    var worksheet = package.Workbook.Worksheets[0];
+                var worksheet = package.Workbook.Worksheets.Add("Main");
 
-                    for (int i = 0; i <= test.Structure.Length - 1; i++)
-                    {
-                        worksheet.Cells[1, i + 1].Value = test.Structure[0, i];
-                    }
+                GenerateHeader(worksheet);
+                SetDefaultCells(worksheet);
 
-                    worksheet.Columns.AutoFit();
-
-                    package.Save();
-                }
-            }
-            else
-            {
-                using (var package = new ExcelPackage())
-                {
-                    var worksheet = package.Workbook.Worksheets.Add("Main");
-
-                    for (int i = 0; i <= test.Structure.Length - 1; i++)
-                    {
-                        worksheet.Cells[1, i + 1].Value = test.Structure[0, i];
-                    }
-
-                    worksheet.Columns.AutoFit();
-
-                    package.SaveAs(new FileInfo(filePath));
-                }
+                package.SaveAs(fi);
             }
 
             MessageBox.Show("Planilha criada com sucesso!");
+        }
+
+        private void GenerateHeader(ExcelWorksheet worksheet)
+        {
+            for (int i = 0; i <= _model.Structure.Length - 1; i++)
+            {
+                worksheet.Cells[1, i + 1].Value = _model.Structure[0, i];
+            }
+
+            worksheet.Columns.BestFit = true;
+            worksheet.Columns.AutoFit(10, 30);
+            worksheet.Columns.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            worksheet.Columns.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            worksheet.View.ZoomScale = 80;
+        }
+
+        private void SetDefaultCells(ExcelWorksheet worksheet)
+        {
+            worksheet.Cells["F2"].Value = 10;
+            double custo = double.Parse(worksheet.Cells["F2"].Value?.ToString());
+            double percent = 0.3;
+            double custoPlusPercent = custo + (custo * percent);
+            worksheet.Cells["H2"].Value = custoPlusPercent;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace PropProAssistant
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form_WorksheetCreation());
+            Application.Run(new Form_ProcessInfo());
         }
     }
 }

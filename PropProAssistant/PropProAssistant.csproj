@@ -70,6 +70,12 @@
     <Compile Include="Components\Worksheets\PcpModel.cs" />
     <Compile Include="Components\Worksheets\PriceBidWorksheet.cs" />
     <Compile Include="Components\Worksheets\WorksheetService.cs" />
+    <Compile Include="Form_ProcessInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form_ProcessInfo.Designer.cs">
+      <DependentUpon>Form_ProcessInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form_PropTransfer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,6 +90,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Form_ProcessInfo.resx">
+      <DependentUpon>Form_ProcessInfo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form_PropTransfer.resx">
       <DependentUpon>Form_PropTransfer.cs</DependentUpon>
     </EmbeddedResource>
