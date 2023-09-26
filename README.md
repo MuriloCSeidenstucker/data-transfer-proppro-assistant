@@ -1,4 +1,4 @@
-# PropProAssistant
+# Data Transfer PropProAssistant
 
 O objetivo inicial deste projeto era desenvolver uma ferramenta destinada a facilitar a criação de propostas de preços para pregões eletrônicos. Inicialmente, aproveitei parte do código que já havia desenvolvido, permitindo-me transferir dados de uma planilha Excel específica para o formato requerido pelos portais de licitação. No entanto, este protótipo carecia de uma interface de usuário, e, portanto, decidi implementar uma utilizando a tecnologia Windows Forms. Optei por essa abordagem devido ao meu conhecimento prévio sobre a mesma.
 
